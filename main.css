@@ -1,0 +1,25 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+
+.link_button {
+    width: 100px;
+    height: 70px;
+    line-height: 70px;
+    background-color: bisque;
+    text-align: center;
+    border-radius: 15px;
+    color: darkblue;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
