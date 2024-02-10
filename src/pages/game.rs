@@ -139,7 +139,14 @@ impl GameControl {
 
         for fb in self.fireballs.iter_mut() {
             fb.update(diff);
+
+            // Check if hit the back wall
+            if fb.get_distance() >= 100.0 {
+                fb.hit_object();
+            }
         }
+
+
 
         self.fireballs.retain(|fireball| {
             fireball.is_alive
