@@ -2,10 +2,12 @@ use yew::prelude::*;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, window};
 use web_sys::wasm_bindgen::{JsCast, JsValue};
 use web_sys::wasm_bindgen::prelude::Closure;
+use js_sys::Date;
 
 use gloo_console::log;
 
-use crate::assets::{backwall::Backwall, wall::*};
+use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
+use crate::player::player::Player;
 
 pub enum GameMsg {
     MouseDown((f64,f64)),
@@ -18,8 +20,11 @@ pub struct GameControl {
     last_x: f64,
     last_y: f64,
     last_action: String,
+    last_update: f64,
     backwall: Backwall,
     walls: Vec::<Wall>,
+    player: Player,
+    fireballs: Vec::<Fireball>,
     canvas: NodeRef,
     callback: Closure<dyn FnMut()>,
 }
@@ -51,8 +56,11 @@ impl Component for GameControl {
             last_x: 0.0,
             last_y: 0.0,
             last_action: "".to_string(),
+            last_update: Date::now(),
             backwall: backwall,
             walls: vec_walls,
+            player: Player::new(),
+            fireballs: Vec::<Fireball>::new(),
             canvas: NodeRef::default(),
             callback: callback
         }
@@ -61,14 +69,19 @@ impl Component for GameControl {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             GameMsg::MouseDown(evt) => {
-                log!("Mouse down ", evt.0, evt.1);
                 self.last_x = evt.0;
                 self.last_y = evt.1;
                 self.last_action = "Mouse down".to_string();
+
+                if self.player.fire_cooldown == 0.0 {
+                    let fireball = Fireball::new(self.last_x, self.last_y);
+                    self.player.fire();
+                    self.fireballs.push(fireball);
+                }
+
                 true
             },
             GameMsg::MouseUp(evt) => {
-                log!("Mouse up ", evt.0, evt.1);
                 self.last_x = evt.0;
                 self.last_y = evt.1;
                 self.last_action = "Mouse Up".to_string();
@@ -116,7 +129,27 @@ impl Component for GameControl {
 
 
 impl GameControl {
+    fn game_update(&mut self) {
+        let cur_time = Date::now();
+        let diff = cur_time - self.last_update;
+
+        self.last_update = cur_time;
+
+        self.player.update(diff);
+
+        for fb in self.fireballs.iter_mut() {
+            fb.update(diff);
+        }
+
+        self.fireballs.retain(|fireball| {
+            fireball.is_alive
+        });
+
+    }
+
     fn render(&mut self) {
+        self.game_update();
+
         let canvas: HtmlCanvasElement = self.canvas.cast().unwrap();
 
         canvas.set_width(canvas.client_width() as u32);
@@ -129,11 +162,22 @@ impl GameControl {
         ctx.fill_rect(0.0, 0.0, canvas.width().into(), canvas.height().into());
 
         // Draw game elements
+        // ---- Scenery
         for wall in self.walls.iter() {
             wall.render(&mut ctx);
         }
-
         self.backwall.render(&mut ctx);
+
+        // ----- Game Assets
+        for fb in self.fireballs.iter() {
+            fb.render(&mut ctx);
+        }
+
+        // ----- Player Assets
+        
+        // ----- HUD
+
+        // End Draw game elements
 
         // Debug Information
         ctx.set_fill_style(&JsValue::from("rgb(255,0,0)"));

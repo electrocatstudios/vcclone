@@ -4,6 +4,7 @@ use yew_router::prelude::*;
 mod pages;
 mod assets;
 mod utils;
+mod player;
 
 #[derive(Clone, Routable, PartialEq)]
 enum Route {
