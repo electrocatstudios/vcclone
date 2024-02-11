@@ -6,6 +6,7 @@ use js_sys::Date;
 
 use gloo_console::log;
 
+use crate::assets::fireball;
 use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
 use crate::player::player::Player;
 
@@ -141,12 +142,8 @@ impl GameControl {
             fb.update(diff);
 
             // Check if hit the back wall
-            if fb.get_distance() >= 100.0 {
-                fb.hit_object();
-            }
+            check_fireball_strike(fb);
         }
-
-
 
         self.fireballs.retain(|fireball| {
             fireball.is_alive
@@ -197,5 +194,29 @@ impl GameControl {
             .unwrap()
             .request_animation_frame(self.callback.as_ref().unchecked_ref())
             .unwrap();
+    }
+}
+
+
+fn check_fireball_strike(fireball: &mut Fireball) {
+    // Check for wall strikes
+    let (x,_y) = fireball.get_loc();
+    if x < 340.0 {
+        // Check if hit the left wall
+        let distance_to_wall = (x/340.0) * 100.0;
+        let fireball_dist = fireball.get_distance();
+        if fireball_dist >= distance_to_wall {
+            fireball.hit_object();
+        }
+    } else if x > 460.0 {
+        // Check if hit the right wall
+        let distance_to_wall = ((GAME_WIDTH - x) / (GAME_WIDTH - 460.0)) * 100.0;
+        let fireball_dist = fireball.get_distance();
+        if fireball_dist >= distance_to_wall {
+            fireball.hit_object();
+        }
+    }
+    if fireball.get_distance() >= 100.0 {
+        fireball.hit_object();
     }
 }

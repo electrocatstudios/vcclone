@@ -144,6 +144,10 @@ impl Fireball {
         self.is_dying = true;
     }
 
+    pub fn get_loc(&self) -> (f64, f64) {
+        (self.loc.x, self.loc.y)
+    }
+
     pub fn get_distance(&mut self) -> f64 {
         if self.is_dying {
             return 0.0;
