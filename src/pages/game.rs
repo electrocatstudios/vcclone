@@ -6,7 +6,6 @@ use js_sys::Date;
 
 use gloo_console::log;
 
-use crate::assets::fireball;
 use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
 use crate::player::player::Player;
 
