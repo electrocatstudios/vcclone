@@ -7,7 +7,9 @@ use js_sys::Date;
 use gloo_console::log;
 
 use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
+use crate::characters::enemy_wizard::EnemyWizard;
 use crate::player::player::Player;
+use crate::{GAME_WIDTH,GAME_HEIGHT};
 
 pub enum GameMsg {
     MouseDown((f64,f64)),
@@ -23,14 +25,12 @@ pub struct GameControl {
     last_update: f64,
     backwall: Backwall,
     walls: Vec::<Wall>,
+    enemies: Vec::<EnemyWizard>,
     player: Player,
     fireballs: Vec::<Fireball>,
     canvas: NodeRef,
     callback: Closure<dyn FnMut()>,
 }
-
-const GAME_WIDTH: f64 = 800.0;
-const GAME_HEIGHT: f64 = 600.0;
 
 impl Component for GameControl {
     type Message = GameMsg;
@@ -59,6 +59,7 @@ impl Component for GameControl {
             last_update: Date::now(),
             backwall: backwall,
             walls: vec_walls,
+            enemies: Vec::<EnemyWizard>::new(),
             player: Player::new(),
             fireballs: Vec::<Fireball>::new(),
             canvas: NodeRef::default(),
@@ -148,6 +149,18 @@ impl GameControl {
             fireball.is_alive
         });
 
+        // Check for presence of wizard
+        if self.enemies.len() < 1 {
+            // self.enemies.push(EnemyWizard::new(0.0, 100.0));
+            // self.enemies.push(EnemyWizard::new(100.0, 100.0));
+            self.enemies.push(EnemyWizard::new(25.0, 100.0));
+            self.enemies.push(EnemyWizard::new(75.0, 100.0));
+        }
+
+        for enemy in self.enemies.iter_mut() {
+            enemy.update(diff);
+        }
+
     }
 
     fn render(&mut self) {
@@ -172,6 +185,10 @@ impl GameControl {
         self.backwall.render(&mut ctx);
 
         // ----- Game Assets
+        for enemy in self.enemies.iter() {
+            enemy.render(&mut ctx);
+        }
+
         for fb in self.fireballs.iter() {
             fb.render(&mut ctx);
         }
