@@ -151,8 +151,8 @@ impl GameControl {
 
         // Check for presence of wizard
         if self.enemies.len() < 1 {
-            // self.enemies.push(EnemyWizard::new(0.0, 100.0));
-            // self.enemies.push(EnemyWizard::new(100.0, 100.0));
+            self.enemies.push(EnemyWizard::new(0.0, 100.0));
+            self.enemies.push(EnemyWizard::new(100.0, 100.0));
             self.enemies.push(EnemyWizard::new(25.0, 100.0));
             self.enemies.push(EnemyWizard::new(75.0, 100.0));
         }
@@ -160,6 +160,12 @@ impl GameControl {
         for enemy in self.enemies.iter_mut() {
             enemy.update(diff);
         }
+
+        self.enemies.sort_by( |a,b| {
+            let a_val: i32 = (a.loc.y * 100.0) as i32;
+            let b_val: i32 = (b.loc.y * 100.0) as i32;
+            a_val.cmp(&b_val)
+        });
 
     }
 
