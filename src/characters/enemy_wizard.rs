@@ -11,13 +11,17 @@ pub struct EnemyWizard {
     dest_loc: Point,
     wait_time: f64,
     move_frame: i32,
+    pub is_alive: bool,
+    pub is_dead: bool,
     time_to_frame: f64,
     image: HtmlImageElement,
     walk_image: HtmlImageElement,
+    burn_image: HtmlImageElement,
 }
 
 const ENEMY_WIZARD_IMAGE: &str = "./assets/images/enemy_wizard.png";
 const ENEMY_WIZARD_WALK_IMAGE: &str = "./assets/images/enemy_wizard_walk.png";
+const ENEMY_WIZARD_BURN_IMAGE: &str = "./assets/images/enemy_wizard_burning.png";
 
 const ENEMY_WIZARD_FRAME_WIDTH: f64 = 100.0;
 const ENEMY_WIZARD_FRAME_HEIGHT: f64 = 150.0;
@@ -30,6 +34,7 @@ const ENEMY_WIZARD_MAX_WAIT: f64 = 4000.0;
 
 const ENEMY_WIZARD_DESTINATION_ACCEPT: f64 = 0.2;
 const ENEMY_WIZARD_WALK_FRAME_DELAY: f64 = 100.0;
+const ENEMY_WIZARD_BURN_FRAME_DELAY: f64 = 300.0;
 
 impl EnemyWizard {
     pub fn new(x: f64, y: f64) -> Self {
@@ -39,18 +44,37 @@ impl EnemyWizard {
         let walk_image = HtmlImageElement::new().unwrap();
         walk_image.set_src(ENEMY_WIZARD_WALK_IMAGE);
 
+        let burn_image = HtmlImageElement::new().unwrap();
+        burn_image.set_src(ENEMY_WIZARD_BURN_IMAGE);
+
         EnemyWizard {
             loc: Point::new(x, y),
             dest_loc: Point::new(x, y),
             image: image,
             wait_time: 1000.0,
+            is_alive: true,
+            is_dead: false,
             move_frame: 0,
             time_to_frame: 0.0,
-            walk_image: walk_image
+            walk_image: walk_image,
+            burn_image: burn_image
         }
     }
     
     pub fn update(&mut self, delta: f64) {
+        if !self.is_alive {
+            // Advance death animation
+            self.time_to_frame -= delta;
+            if self.time_to_frame < 0.0 {
+                self.time_to_frame += ENEMY_WIZARD_BURN_FRAME_DELAY;
+                self.move_frame += 1;
+                if self.move_frame as f64 * ENEMY_WIZARD_FRAME_WIDTH >= self.burn_image.width() as f64 {
+                    self.is_dead = true;
+                }
+            }
+            return;
+        }
+       
         if self.wait_time > 0.0 {
             self.wait_time -= delta;
             return;
@@ -91,6 +115,10 @@ impl EnemyWizard {
     }
 
     pub fn render(&self, ctx: &mut CanvasRenderingContext2d) {
+        if self.is_dead {
+            return;
+        }
+
         let output_width = ENEMY_WIZARD_BACKWALL_WIDTH + ((self.loc.y / 100.0) * (ENEMY_WIZARD_FRAME_WIDTH - ENEMY_WIZARD_BACKWALL_WIDTH));
         let output_height = ENEMY_WIZARD_BACKWALL_HEIGHT + ((self.loc.y / 100.0) * (ENEMY_WIZARD_FRAME_HEIGHT - ENEMY_WIZARD_BACKWALL_HEIGHT));
         
@@ -102,7 +130,10 @@ impl EnemyWizard {
 
         // log!("Enemy position ", self.loc.x, self.loc.y, x, y);
         let mut offset = 0.0;
-        let image = if self.wait_time <= 0.0 {
+        let image = if !self.is_alive {
+            offset = self.move_frame as f64 * ENEMY_WIZARD_FRAME_WIDTH;
+            &self.burn_image
+        } else if self.wait_time <= 0.0 {
             offset = self.move_frame as f64 * ENEMY_WIZARD_FRAME_WIDTH;
             &self.walk_image
         } else {
@@ -129,5 +160,19 @@ impl EnemyWizard {
 
     pub fn get_distance(&mut self) -> f64 {
        100.0 - self.loc.y
+    }
+
+    pub fn get_width(&self) -> f64 {
+        ENEMY_WIZARD_FRAME_WIDTH
+    }
+    pub fn get_height(&self) -> f64 {
+        ENEMY_WIZARD_FRAME_HEIGHT
+    }
+
+    pub fn hit_by_object(&mut self) {
+        self.is_alive = false;
+        self.time_to_frame = ENEMY_WIZARD_WALK_FRAME_DELAY;
+        self.move_frame = 0;
+        self.wait_time = 0.0;
     }
 }

@@ -6,6 +6,7 @@ use js_sys::Date;
 
 use gloo_console::log;
 
+use crate::assets::fireball;
 use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
 use crate::characters::enemy_wizard::EnemyWizard;
 use crate::player::player::Player;
@@ -165,6 +166,20 @@ impl GameControl {
             let a_val: i32 = (a.loc.y * 100.0) as i32;
             let b_val: i32 = (b.loc.y * 100.0) as i32;
             a_val.cmp(&b_val)
+        });
+
+        'outer: for enemy in self.enemies.iter_mut() {
+            for fireball in self.fireballs.iter_mut() {
+                if true || fireball.check_collision(enemy) {
+                    fireball.is_alive = false;
+                    log!("Outer loop hit enemy - set enemy on fire");
+                    enemy.hit_by_object();
+                    break 'outer;
+                }
+            }
+        }
+        self.fireballs.retain(|fireball| {
+            fireball.is_alive
         });
 
     }

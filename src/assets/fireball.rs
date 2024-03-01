@@ -2,7 +2,7 @@ use web_sys::{CanvasRenderingContext2d, HtmlImageElement};
 use rand::Rng;
 use gloo_console::log;
 
-use crate::utils::Point;
+use crate::{characters::enemy_wizard::EnemyWizard, utils::Point};
 
 enum FireballSelect {
     Left,
@@ -12,6 +12,7 @@ enum FireballSelect {
 pub struct Fireball {
     loc: Point,
     ttl: f64,
+    pub distance: f64,
     is_dying: bool,
     pub is_alive: bool,
     cur_frame: i32,
@@ -30,6 +31,7 @@ const FIREBALL_IMAGE_HEIGHT: f64 = 100.0;
 const FIREBALL_TIME_TO_LIVE: f64 = 3000.0;
 const FIREBALL_TIME_BETWEEN_FRAMES: f64 = 60.0;
 const FIREBALL_TIME_TO_FULL_DISTANCE: f64 = 2000.0; // Time to travel entire corridor
+const FIREBALL_COLLISION_DISTANCE: f64 = 2.0;
 
 impl Fireball {
     pub fn new(x: f64, y: f64) -> Self {
@@ -52,6 +54,7 @@ impl Fireball {
         Fireball {
             loc: Point::new(x, y),
             ttl: FIREBALL_TIME_TO_LIVE,
+            distance: 100.0,
             is_dying: false,
             is_alive: true,
             cur_frame: 0,
@@ -71,6 +74,8 @@ impl Fireball {
             self.is_dying = true;
             self.ttl = FIREBALL_TIME_TO_LIVE;
         }
+
+        self.distance = (self.ttl/FIREBALL_TIME_TO_LIVE) * 100.0;
 
         self.time_to_frame -= delta;
         if self.time_to_frame < 0.0 {
@@ -155,5 +160,18 @@ impl Fireball {
         let time_alive = FIREBALL_TIME_TO_LIVE - self.ttl;
         
         (time_alive / FIREBALL_TIME_TO_FULL_DISTANCE) * 100.0
+    }
+
+    pub fn check_collision(&mut self, object: &EnemyWizard) -> bool {
+        let half_width = object.get_width() / 2.0;
+        if self.loc.x > object.loc.x - half_width && self.loc.x < object.loc.x + half_width {
+            // In correct x location
+            if (self.get_distance() - object.loc.y).abs() < FIREBALL_COLLISION_DISTANCE {
+                log!("Fireball hit enemy");
+                self.hit_object();
+                return true;
+            }
+        }
+        false
     }
 }
