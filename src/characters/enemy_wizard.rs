@@ -1,3 +1,4 @@
+use js_sys::wasm_bindgen::JsValue;
 use web_sys::{CanvasRenderingContext2d,HtmlImageElement};
 use rand::Rng;
 
@@ -17,6 +18,7 @@ pub struct EnemyWizard {
     image: HtmlImageElement,
     walk_image: HtmlImageElement,
     burn_image: HtmlImageElement,
+    hit_point: Point
 }
 
 const ENEMY_WIZARD_IMAGE: &str = "./assets/images/enemy_wizard.png";
@@ -57,7 +59,8 @@ impl EnemyWizard {
             move_frame: 0,
             time_to_frame: 0.0,
             walk_image: walk_image,
-            burn_image: burn_image
+            burn_image: burn_image,
+            hit_point: Point::new(0.0, 0.0),
         }
     }
     
@@ -152,6 +155,30 @@ impl EnemyWizard {
             output_height
         );
 
+        // DEBUG - Drawing bounding box
+
+        let ss = ctx.stroke_style();
+        let _ = ctx.begin_path();
+        if self.is_alive {
+            let _ = ctx.set_stroke_style(&JsValue::from("rgb(255,255,0)"));
+            let _ = ctx.move_to(x - (output_width/2.0), y);
+            let _ = ctx.line_to(x + (output_width/2.0), y);
+            let _ = ctx.line_to(x + (output_width/2.0), y + output_height);
+            let _ = ctx.line_to(x - (output_width/2.0), y + output_height);
+            let _ = ctx.line_to(x - (output_width/2.0), y);
+        } else {
+            let _ = ctx.set_stroke_style(&JsValue::from("rgb(255,0,0)"));
+            let _ = ctx.move_to(self.hit_point.x - 5.0, self.hit_point.y - 5.0);
+            let _ = ctx.line_to(self.hit_point.x + 5.0, self.hit_point.y + 5.0);
+            let _ = ctx.move_to(self.hit_point.x - 5.0, self.hit_point.y + 5.0);
+            let _ = ctx.line_to(self.hit_point.x + 5.0, self.hit_point.y - 5.0);
+                  
+        }
+        let _ = ctx.stroke();  
+        let _ = ctx.set_stroke_style(&ss);
+        
+        // END DEBUG
+
     }
 
     pub fn get_loc(&self) -> (f64, f64) {
@@ -174,5 +201,28 @@ impl EnemyWizard {
         self.time_to_frame = ENEMY_WIZARD_WALK_FRAME_DELAY;
         self.move_frame = 0;
         self.wait_time = 0.0;
+    }
+
+    pub fn check_hit(&mut self, hit_x: f64, hit_y: f64) -> bool {
+        let output_width = ENEMY_WIZARD_BACKWALL_WIDTH + ((self.loc.y / 100.0) * (ENEMY_WIZARD_FRAME_WIDTH - ENEMY_WIZARD_BACKWALL_WIDTH));
+        let output_height = ENEMY_WIZARD_BACKWALL_HEIGHT + ((self.loc.y / 100.0) * (ENEMY_WIZARD_FRAME_HEIGHT - ENEMY_WIZARD_BACKWALL_HEIGHT));
+        
+        let hall_width = 120.0 + ((self.loc.y / 100.0) * 680.0);
+        let offset_from_left = (self.loc.x / 100.0) * hall_width; 
+
+        let x: f64 = ((340.0 - ((self.loc.y / 100.0) * 340.0)) + offset_from_left) - (output_width/2.0);         
+        let y: f64 = ((GAME_HEIGHT / 2.0) + (self.loc.y * 2.5) + 50.0) - output_height;
+
+        if hit_x > x && hit_x < x + output_width
+            && hit_y > y && hit_y < y + output_height {
+            
+            self.hit_point.x = hit_x;
+            self.hit_point.y = hit_y;
+            self.hit_by_object();
+            true
+
+        } else {
+            false
+        }
     }
 }

@@ -167,7 +167,7 @@ impl Fireball {
         if self.loc.x > object.loc.x - half_width && self.loc.x < object.loc.x + half_width {
             // In correct x location
             if (self.get_distance() - object.loc.y).abs() < FIREBALL_COLLISION_DISTANCE {
-                log!("Fireball hit enemy");
+                // log!("Fireball hit enemy");
                 self.hit_object();
                 return true;
             }

@@ -7,9 +7,11 @@ use js_sys::Date;
 use gloo_console::log;
 
 use crate::assets::fireball;
+use crate::assets::lightning_bolt::LightningBolt;
 use crate::assets::{backwall::Backwall, wall::*,fireball::Fireball};
 use crate::characters::enemy_wizard::EnemyWizard;
 use crate::player::player::Player;
+use crate::utils::Point;
 use crate::{GAME_WIDTH,GAME_HEIGHT};
 
 pub enum GameMsg {
@@ -27,6 +29,7 @@ pub struct GameControl {
     backwall: Backwall,
     walls: Vec::<Wall>,
     enemies: Vec::<EnemyWizard>,
+    lightning_bolts: Vec::<LightningBolt>,
     player: Player,
     fireballs: Vec::<Fireball>,
     canvas: NodeRef,
@@ -61,6 +64,7 @@ impl Component for GameControl {
             backwall: backwall,
             walls: vec_walls,
             enemies: Vec::<EnemyWizard>::new(),
+            lightning_bolts: Vec::<LightningBolt>::new(),
             player: Player::new(),
             fireballs: Vec::<Fireball>::new(),
             canvas: NodeRef::default(),
@@ -74,11 +78,11 @@ impl Component for GameControl {
                 self.last_x = evt.0;
                 self.last_y = evt.1;
                 self.last_action = "Mouse down".to_string();
-
-                if self.player.fire_cooldown == 0.0 {
-                    let fireball = Fireball::new(self.last_x, self.last_y);
-                    self.player.fire();
-                    self.fireballs.push(fireball);
+                // log!("Mouse down ", self.last_x, self.last_y );
+                if self.player.fire_cooldown <= 0.0 {
+                    // let fireball = Fireball::new(self.last_x, self.last_y);
+                    self.player.fire(self.last_x, self.last_y);
+                    // self.fireballs.push(fireball);
                 }
 
                 true
@@ -138,17 +142,44 @@ impl GameControl {
         self.last_update = cur_time;
 
         self.player.update(diff);
+    
+        for lb in self.lightning_bolts.iter_mut() {
+            lb.update(diff);
+        }
+        self.lightning_bolts.retain(|lb| {
+            lb.is_alive
+        });
 
-        for fb in self.fireballs.iter_mut() {
-            fb.update(diff);
 
-            // Check if hit the back wall
-            check_fireball_strike(fb);
+        match self.player.get_fired() {
+            Some(strike_point) => {
+                // log!("We have successfully got_fired ", strike_point.x, strike_point.y);
+                for enemy in self.enemies.iter_mut() {
+                    if enemy.check_hit(strike_point.x, strike_point.y) {
+                        // log!("We have hit the enemy");
+                        self.lightning_bolts.push(
+                            LightningBolt::new(
+                            Point::new(GAME_WIDTH/2.0, GAME_HEIGHT),
+                            Point::new(strike_point.x, strike_point.y)
+                            )
+                        );
+                        break;
+                    }
+                }
+            },
+            None => {}
         }
 
-        self.fireballs.retain(|fireball| {
-            fireball.is_alive
-        });
+        // for fb in self.fireballs.iter_mut() {
+        //     fb.update(diff);
+    
+        //     // Check if hit the back wall
+        //     // check_fireball_strike(fb);
+        // }
+
+        // self.fireballs.retain(|fireball| {
+        //     fireball.is_alive
+        // });
 
         // Check for presence of wizard
         if self.enemies.len() < 1 {
@@ -172,15 +203,15 @@ impl GameControl {
             for fireball in self.fireballs.iter_mut() {
                 if true || fireball.check_collision(enemy) {
                     fireball.is_alive = false;
-                    log!("Outer loop hit enemy - set enemy on fire");
+                    // log!("Outer loop hit enemy - set enemy on fire");
                     enemy.hit_by_object();
                     break 'outer;
                 }
             }
         }
-        self.fireballs.retain(|fireball| {
-            fireball.is_alive
-        });
+        // self.fireballs.retain(|fireball| {
+        //     fireball.is_alive
+        // });
 
     }
 
@@ -213,7 +244,9 @@ impl GameControl {
         for fb in self.fireballs.iter() {
             fb.render(&mut ctx);
         }
-
+        for lb in self.lightning_bolts.iter_mut() {
+            lb.render(&mut ctx);
+        }
         // ----- Player Assets
         
         // ----- HUD
