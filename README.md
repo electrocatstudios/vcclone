@@ -21,6 +21,10 @@ to the videos when they are done.
 |---|---|---|
 | Episode 1 | Introduction Code | [https://youtube.com/live/kgTjhOSb1lA](https://youtube.com/live/kgTjhOSb1lA) |
 | Episode 2 | Adding in walls and images | [https://youtube.com/live/xhV10DZar5s](https://youtube.com/live/xhV10DZar5s) |
+| Episode 3 | Fireballs and distance calculations | [https://youtube.com/live/xhV10DZar5s](https://youtube.com/live/xhV10DZar5s |
+| Episode 4 | First Enemy and distance calculations | [https://youtube.com/live/_1O_8DHCK2w](https://youtube.com/live/_1O_8DHCK2w) |
+| Episode 5 | Animating Enemies walking and dying | [https://youtube.com/live/w9dpRPwX9jQ](https://youtube.com/live/w9dpRPwX9jQ) | 
+| Episode 6 | Turn fireball into lightning strike | [https://youtube.com/live/VhlFs2uNFkY](https://youtube.com/live/VhlFs2uNFkY) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
