@@ -1,7 +1,7 @@
 # vcclone
 A simple 2d game in the spirit of virtua-cop
 
-![Progress Pic after Episode 2](/docs/episode2.png)
+![Progress Pic after Episode 2](/docs/vcclone_enemies.png)
 
 ## Running Code
 To run the code you will need to install `trunk` via Cargo. Then
