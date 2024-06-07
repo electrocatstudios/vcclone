@@ -54,7 +54,7 @@ impl Component for GameControl {
         vec_walls.push(Wall::new(GAME_WIDTH/4.0, GAME_HEIGHT/2.0, WallType::Left));
         vec_walls.push(Wall::new(GAME_WIDTH * 0.75, GAME_HEIGHT/2.0, WallType::Right));
         vec_walls.push(Wall::new(GAME_WIDTH/2.0, GAME_HEIGHT/4.0, WallType::Top));
-        vec_walls.push(Wall::new(GAME_WIDTH/2.0, GAME_HEIGHT * 0.75, WallType::Bottom));
+        vec_walls.push(Wall::new(GAME_WIDTH/2.0, GAME_HEIGHT, WallType::Bottom));
                 
         Self{
             last_x: 0.0,
@@ -241,9 +241,9 @@ impl GameControl {
             enemy.render(&mut ctx);
         }
 
-        for fb in self.fireballs.iter() {
-            fb.render(&mut ctx);
-        }
+        // for fb in self.fireballs.iter() {
+        //     fb.render(&mut ctx);
+        // }
         for lb in self.lightning_bolts.iter_mut() {
             lb.render(&mut ctx);
         }

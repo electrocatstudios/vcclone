@@ -21,8 +21,10 @@ impl Backwall {
     }
 
     pub fn render(&self, ctx: &mut CanvasRenderingContext2d) {
-        let x = self.loc.x - (self.image.width() as f64 / 2.0);
-        let y = self.loc.y - (self.image.height() as f64 / 2.0);
+        let new_w = self.image.width() as f64 * 1.1;
+        let new_h = self.image.height() as f64 * 1.1;
+        let x = self.loc.x - (new_w / 2.0);
+        let y = self.loc.y - (new_h / 2.0);
         
         let _ = ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
             &self.image, 
@@ -32,8 +34,8 @@ impl Backwall {
             self.image.height() as f64, 
             x, 
             y, 
-            self.image.width() as f64, 
-            self.image.height() as f64
+            new_w, 
+            new_h
         );
 
     }
