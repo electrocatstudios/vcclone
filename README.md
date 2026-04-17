@@ -25,6 +25,8 @@ to the videos when they are done.
 | Episode 4 | First Enemy and distance calculations | [https://youtube.com/live/_1O_8DHCK2w](https://youtube.com/live/_1O_8DHCK2w) |
 | Episode 5 | Animating Enemies walking and dying | [https://youtube.com/live/w9dpRPwX9jQ](https://youtube.com/live/w9dpRPwX9jQ) | 
 | Episode 6 | Turn fireball into lightning strike | [https://youtube.com/live/VhlFs2uNFkY](https://youtube.com/live/VhlFs2uNFkY) |
+| Episode 7 | Try to get floor to work | [https://youtube.com/live/Xy_HCqXVXwI](https://youtube.com/live/Xy_HCqXVXwI) |
+| Episode 8 | We're going 3d | [https://youtube.com/live/C_BZLW9XH3E](https://youtube.com/live/C_BZLW9XH3E) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
