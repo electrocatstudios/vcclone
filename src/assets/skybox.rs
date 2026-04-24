@@ -15,7 +15,7 @@ impl Skybox {
         model.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
         model.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
 
-        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/dice_skin.png"));
+        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/skybox.png"));
         let data_url = format!("data:image/png;base64,{}", tex_b64);
         model.set_texture_base64(data_url);
         model.set_scale(5.0, 4.0, 20.0);
