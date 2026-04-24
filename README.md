@@ -1,6 +1,10 @@
 # vcclone
 A simple 2d game in the spirit of virtua-cop
 
+![Progress Pic after Episode 9](/docs/3d_model_screenshot.png)
+
+An earlier screenshot with the enemies (from when it was a 2D project):
+
 ![Progress Pic after Episode 2](/docs/vcclone_enemies.png)
 
 ## Running Code
@@ -27,6 +31,7 @@ to the videos when they are done.
 | Episode 6 | Turn fireball into lightning strike | [https://youtube.com/live/VhlFs2uNFkY](https://youtube.com/live/VhlFs2uNFkY) |
 | Episode 7 | Try to get floor to work | [https://youtube.com/live/Xy_HCqXVXwI](https://youtube.com/live/Xy_HCqXVXwI) |
 | Episode 8 | We're going 3d | [https://youtube.com/live/C_BZLW9XH3E](https://youtube.com/live/C_BZLW9XH3E) |
+| Episode 9 | Adding Textures and Movement | [https://youtube.com/live/wNZUIhawEGA](https://youtube.com/live/C_BZLW9XH3E) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
