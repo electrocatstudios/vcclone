@@ -5,6 +5,7 @@ mod pages;
 mod model;
 mod assets;
 mod utils;
+mod player;
 
 
 pub const GAME_WIDTH: f64 = 800.0;

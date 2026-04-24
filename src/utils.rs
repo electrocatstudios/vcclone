@@ -17,14 +17,14 @@ impl _LocationRotation2D {
     }
 }
 
-pub struct _Location3D {
+pub struct Location3D {
     pub x: f32,
     pub y: f32,
     pub z: f32,
 }
 
-impl _Location3D {
-    pub fn _new(x: f32, y: f32, z: f32) -> Self {
+impl Location3D {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
     pub fn _default() -> Self {
@@ -176,28 +176,28 @@ pub fn get_data_from_buffer(primitive: &Primitive, gltf: &gltf_json::Root, seman
 
 
 
-pub struct _MinMax {
-    pub min: _Location3D,
-    pub max: _Location3D,
-}
+// pub struct _MinMax {
+//     pub min: _Location3D,
+//     pub max: _Location3D,
+// }
 
-pub fn _get_min_max_for_buffer(primitive: &Primitive, gltf: &gltf_json::Root, semantic_in: Semantic, _debug: bool) -> Option<_MinMax> {
-    let semantic: Checked<Semantic> = Checked::<Semantic>::Valid(semantic_in.clone());
-    let att = primitive.attributes.get(&semantic).unwrap();
-    let accessor = gltf.accessors.get(att.value()).unwrap();
-    let min: _Location3D = match &accessor.min {
-        Some(val) => {
-            println!("Min values for accessor: {:?}", val);
-            // _Location3D::_new(val[0] as f32, val[1] as f32, val[2] as f32)
-            _Location3D::_default()
-        },
-        _ => return None
-    };
-    Some(_MinMax {
-        min,
-        max: _Location3D::_default() // Placeholder, as max is not handled in this example
-    })
-}
+// pub fn _get_min_max_for_buffer(primitive: &Primitive, gltf: &gltf_json::Root, semantic_in: Semantic, _debug: bool) -> Option<_MinMax> {
+//     let semantic: Checked<Semantic> = Checked::<Semantic>::Valid(semantic_in.clone());
+//     let att = primitive.attributes.get(&semantic).unwrap();
+//     let accessor = gltf.accessors.get(att.value()).unwrap();
+//     let min: _Location3D = match &accessor.min {
+//         Some(val) => {
+//             println!("Min values for accessor: {:?}", val);
+//             // _Location3D::_new(val[0] as f32, val[1] as f32, val[2] as f32)
+//             _Location3D::_default()
+//         },
+//         _ => return None
+//     };
+//     Some(_MinMax {
+//         min,
+//         max: _Location3D::_default() // Placeholder, as max is not handled in this example
+//     })
+// }
 
 pub fn get_f32_buffer_from_u8(buffer: Vec<u8>) -> Vec<f32> {
     let mut ret = Vec::<f32>::new();

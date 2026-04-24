@@ -8,13 +8,17 @@ use gloo_console;
 
 use crate::assets::skybox::Skybox;
 use crate::pages::viewmanager::ViewManager;
+use crate::player::keymanager::KeyManager;
 
-use crate::{GAME_WIDTH,GAME_HEIGHT};
+use crate::player::player::Player;
+use crate::{GAME_HEIGHT, GAME_WIDTH};
 
 pub enum GameMsg {
     MouseDown((f64,f64)),
     MouseUp((f64,f64)),
     MouseMove((f64,f64)),
+    KeyDown(String),
+    KeyUp(String),
     Render
 }
 
@@ -28,9 +32,10 @@ pub struct GameControl {
     node_ref: NodeRef,
     view_manager: ViewManager,
     skybox: Skybox,
+    key_manager: KeyManager,
     // enemies: Vec::<EnemyWizard>,
     // lightning_bolts: Vec::<LightningBolt>,
-    // player: Player,
+    player: Player,
     // fireballs: Vec::<Fireball>,
     callback: Closure<dyn FnMut()>,
 }
@@ -54,9 +59,10 @@ impl Component for GameControl {
             node_ref: NodeRef::default(),
             view_manager: ViewManager::new(),
             skybox: Skybox::new(),
+            key_manager: KeyManager::new(),
             // enemies: Vec::<EnemyWizard>::new(),
             // lightning_bolts: Vec::<LightningBolt>::new(),
-            // player: Player::new(),
+            player: Player::new(),
             // fireballs: Vec::<Fireball>::new(),
             callback: callback
         }
@@ -84,15 +90,28 @@ impl Component for GameControl {
                 true
             },
             GameMsg::MouseMove(evt) => {
+                let x_diff = evt.0 - self.last_x;
+                let y_diff = evt.1 - self.last_y;
+
                 self.last_x = evt.0;
                 self.last_y = evt.1;
-                self.last_action = "Mouse Move".to_string();
+
+                self.player.look(x_diff as f32, y_diff as f32); 
+                // self.last_action = "Mouse Move".to_string();
                 true
             },
             GameMsg::Render => {
                 self.render();
                 true
             },
+            GameMsg::KeyDown(key) => {
+                self.key_manager.handle_key_down(key);
+                true
+            },
+            GameMsg::KeyUp(key) => {
+                self.key_manager.handle_key_up(key);
+                true
+            }
         }
     }
 
@@ -106,16 +125,24 @@ impl Component for GameControl {
         let onmousemove = ctx.link().callback(move |evt:MouseEvent| {
             GameMsg::MouseMove(( evt.page_x() as f64, evt.page_y() as f64) )
         });
-        
+        let onkeydown = ctx.link().callback(move |evt:KeyboardEvent| {
+            GameMsg::KeyDown(evt.key())
+        });
+        let onkeyup = ctx.link().callback(move |evt:KeyboardEvent| {
+            GameMsg::KeyUp(evt.key())
+        });
 
         html! {
             <div class="game_canvas">
                 <canvas id="canvas"
                     style={"margin: 0px; width: 800px; height: 600px; left: 0px; top:0px;"}
                     ref={self.node_ref.clone()}
+                    onkeydown={onkeydown}
+                    onkeyup={onkeyup}
                     onmousedown={onmousedown}
                     onmouseup={onmouseup}
                     onmousemove={onmousemove}
+                    tabindex="0"
                     >
                 </canvas>
             </div>
@@ -147,6 +174,24 @@ impl Component for GameControl {
 
 
 impl GameControl {
+    fn game_update(&mut self) {
+        let now = Date::now();
+        let delta = now - self.last_update;
+        self.last_update = now;
+
+        self.player.update(delta, &self.key_manager);
+        let player_loc = self.player.get_location();
+
+        self.view_manager.camera.move_camera(player_loc.x, player_loc.y, player_loc.z);
+
+        let look_at = self.player.get_look_rotation();
+    
+        let x = player_loc.x - look_at.0;
+        let y = player_loc.y - (look_at.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
+
+        self.view_manager.camera.look_at(x, y, 0.0);
+    }
+
     fn render(&mut self) {
         match &mut self.gl {
             Some(_) => {},
@@ -155,6 +200,8 @@ impl GameControl {
                 return;
             }
         }
+        self.game_update();
+
         let mut gl = self.gl.as_ref().expect("GL Context not initialized!");
 
         self.view_manager.update(gl);
