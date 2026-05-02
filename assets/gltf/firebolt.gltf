@@ -1,0 +1,86 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "count": 24,
+      "componentType": 5126,
+      "type": "VEC3",
+      "min": [
+        -0.20000000298023224,
+        -0.10000000149011612,
+        -0.10000000149011612
+      ],
+      "max": [
+        0.800000011920929,
+        0.10000000149011612,
+        0.10000000149011612
+      ]
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 12,
+      "count": 24,
+      "componentType": 5126,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 24,
+      "count": 24,
+      "componentType": 5126,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 32,
+      "count": 24,
+      "componentType": 5126,
+      "type": "VEC3"
+    }
+  ],
+  "asset": {
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "byteLength": 1056,
+      "uri": "data:application/octet-stream;base64,AAAAAM3MzD3NzMy9AACAPwAAgD8AAAAAAAAAAAAAAAAt+eS+LflkPwAAAADNzEy+AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAC355L4t+WQ/AAAAAAAAAADNzMw9zczMPQAAgD8AAIA/AAAAAAAAAAAAAAAALfnkvi35ZD8AAAAAAAAAAM3MzD3NzMw9AACAPwAAgD8AAAAAAAAAAAAAAAAt+eS+AAAAAC35ZD/NzEy+AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAC355L4AAAAALflkPwAAAADNzMy9zczMPQAAgD8AAIA/AAAAAAAAAAAAAAAALfnkvgAAAAAt+WQ/AAAAAM3MzL3NzMw9AACAPwAAgD8AAAAAAAAAAAAAAAAt+eS+LflkvwAAAIDNzEy+AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAC355L4t+WS/AAAAgAAAAADNzMy9zczMvQAAgD8AAIA/AAAAAAAAAAAAAAAALfnkvi35ZL8AAACAAAAAAM3MzL3NzMy9AACAPwAAgD8AAAAAAAAAAAAAAAAt+eS+AAAAAC35ZL/NzEy+AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAC355L4AAAAALflkvwAAAADNzMw9zczMvQAAgD8AAIA/AAAAAAAAAAAAAAAALfnkvgAAAAAt+WS/AAAAAM3MzD3NzMy9AACAPwAAgD8AAAAAAAAAAAAAAADsBf497AV+PwAAAIAAAAAAzczMPc3MzD0AAIA/AACAPwAAAAAAAAAAAAAAAOwF/j3sBX4/AAAAgM3MTD8AAAAAAAAAAIGVIz+0yFY/zcxMPQAAAAAAAAAA7AX+PewFfj8AAACAAAAAAM3MzD3NzMw9AACAPwAAgD8AAAAAAAAAAAAAAADsBf49AAAAAOwFfj8AAAAAzczMvc3MzD0AAIA/AACAPwAAAAAAAAAAAAAAAOwF/j0AAAAA7AV+P83MTD8AAAAAAAAAAIGVIz+0yFY/zcxMPQAAAAAAAAAA7AX+PQAAAADsBX4/AAAAAM3MzL3NzMw9AACAPwAAgD8AAAAAAAAAAAAAAADsBf497AV+vwAAAAAAAAAAzczMvc3MzL0AAIA/AACAPwAAAAAAAAAAAAAAAOwF/j3sBX6/AAAAAM3MTD8AAAAAAAAAAIGVIz+0yFY/zcxMPQAAAAAAAAAA7AX+PewFfr8AAAAAAAAAAM3MzL3NzMy9AACAPwAAgD8AAAAAAAAAAAAAAADsBf49AAAAAOwFfr8AAAAAzczMPc3MzL0AAIA/AACAPwAAAAAAAAAAAAAAAOwF/j0AAAAA7AV+v83MTD8AAAAAAAAAAIGVIz+0yFY/zcxMPQAAAAAAAAAA7AX+PQAAAADsBX6/"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 1056,
+      "byteStride": 44,
+      "target": 34962
+    }
+  ],
+  "meshes": [
+    {
+      "name": "firebolt_mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 3,
+            "COLOR_0": 1,
+            "TEXCOORD_0": 2
+          }
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

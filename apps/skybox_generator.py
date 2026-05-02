@@ -21,13 +21,13 @@ if __name__ == "__main__":
         for y in range(start_y, end_y):
             out_x = (x % 64) / 64
             out_y = (y % 64) / 64
-            flipped = (y % 128) >= 64
-            if not flipped and out_x < 0.1:
+            flipped = (x % 128) >= 64
+            if not flipped and out_y < 0.1:
                 im.putpixel((x,y), DARK_SANDSTONE)
-            elif flipped and out_x > 0.4 and out_x < 0.5:
+            elif flipped and out_y > 0.4 and out_y < 0.5:
                 im.putpixel((x,y), DARK_SANDSTONE)
             else:
-                if out_y < 0.1:
+                if out_x < 0.1:
                     im.putpixel((x,y), DARK_SANDSTONE)
                 else:
                     im.putpixel((x,y), LIGHT_SANDSTONE)
@@ -113,13 +113,13 @@ if __name__ == "__main__":
         for y in range(start_y, end_y):
             out_x = (x % 64) / 64
             out_y = (y % 64) / 64
-            flipped = (y % 128) >= 64
-            if not flipped and out_x < 0.1:
+            flipped = (x % 128) >= 64
+            if not flipped and out_y < 0.1:
                 im.putpixel((x,y), DARK_SANDSTONE)
-            elif flipped and out_x > 0.4 and out_x < 0.5:
+            elif flipped and out_y > 0.4 and out_y < 0.5:
                 im.putpixel((x,y), DARK_SANDSTONE)
             else:
-                if out_y < 0.1:
+                if out_x < 0.1:
                     im.putpixel((x,y), DARK_SANDSTONE)
                 else:
                     im.putpixel((x,y), LIGHT_SANDSTONE)

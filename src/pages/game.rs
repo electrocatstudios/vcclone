@@ -6,6 +6,7 @@ use js_sys::Date;
 
 use gloo_console;
 
+use crate::assets::firebolt::{self, Firebolt};
 use crate::assets::skybox::Skybox;
 use crate::pages::viewmanager::ViewManager;
 use crate::player::keymanager::KeyManager;
@@ -37,6 +38,7 @@ pub struct GameControl {
     // lightning_bolts: Vec::<LightningBolt>,
     player: Player,
     // fireballs: Vec::<Fireball>,
+    firebolts: Vec::<Firebolt>,
     callback: Closure<dyn FnMut()>,
 }
 
@@ -64,6 +66,7 @@ impl Component for GameControl {
             // lightning_bolts: Vec::<LightningBolt>::new(),
             player: Player::new(),
             // fireballs: Vec::<Fireball>::new(),
+            firebolts: Vec::<Firebolt>::new(),
             callback: callback
         }
     }
@@ -75,6 +78,8 @@ impl Component for GameControl {
                 self.last_y = evt.1;
                 self.last_action = "Mouse down".to_string();
                 // log!("Mouse down ", self.last_x, self.last_y );
+                let firebolt = self.player.cast_firebolt();
+                self.firebolts.push(firebolt);
                 // if self.player.fire_cooldown <= 0.0 {
                 //     // let fireball = Fireball::new(self.last_x, self.last_y);
                 //     self.player.fire(self.last_x, self.last_y);
@@ -190,6 +195,11 @@ impl GameControl {
         let y = player_loc.y - (look_at.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
 
         self.view_manager.camera.look_at(x, y, 0.0);
+
+        for firebolt in self.firebolts.iter_mut() {
+            firebolt.update(delta);
+        }
+
     }
 
     fn render(&mut self) {
@@ -204,9 +214,13 @@ impl GameControl {
 
         let mut gl = self.gl.as_ref().expect("GL Context not initialized!");
 
+        for firebolt in self.firebolts.iter_mut() {
+            firebolt.setup(gl, self.view_manager.width as f32, self.view_manager.height as f32);
+        }
         self.view_manager.update(gl);
         self.skybox.update(self.view_manager.delta, gl, self.view_manager.width as f32, self.view_manager.height as f32);
-        
+   
+
         gl.viewport(
             0,
             0,
@@ -224,13 +238,17 @@ impl GameControl {
 
         self.skybox.render(gl, self.view_manager.u_time as f64, &self.view_manager.camera);
 
-        
+        for firebolt in self.firebolts.iter_mut() {
+            firebolt.render(gl, self.view_manager.u_time as f64, &self.view_manager.camera);
+        }
         // Debug Information
         // ctx.set_fill_style(&JsValue::from("rgb(255,0,0)"));
         // ctx.set_font("12px serif");
         // let loc_string = "X: ".to_owned() + self.last_x.to_string().as_str() + ", Y: " + self.last_y.to_string().as_str();
         // let _ = ctx.fill_text(loc_string.as_str(), 10.0, 15.0);
         // End Debug Information
+
+        self.firebolts.retain(|fb| !fb.is_expired());
 
         window()
             .unwrap()

@@ -17,6 +17,7 @@ impl _LocationRotation2D {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Location3D {
     pub x: f32,
     pub y: f32,

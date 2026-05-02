@@ -1,6 +1,6 @@
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::utils::Location3D;
+use crate::{assets::firebolt::Firebolt, utils::Location3D};
 use super::keymanager::KeyManager;
 
 pub struct Player {
@@ -68,7 +68,21 @@ impl Player {
         if self.look_rot.1 < -std::f32::consts::PI * 1.2 {
             self.look_rot.1 = -std::f32::consts::PI * 1.2;
         }
+        // gloo_console::log!("Look rotation: ", self.look_rot.0, self.look_rot.1);
+    }
 
-        gloo_console::log!("Look rotation: ", self.look_rot.0, self.look_rot.1);
+    pub fn cast_firebolt(&self) -> Firebolt {
+        let speed = 0.01;
+        // let velocity = (
+        //     self.look_rot.1.sin() * self.look_rot.0.cos() * speed,
+        //     self.look_rot.0.sin() * speed,
+        //     self.look_rot.1.cos() * self.look_rot.0.cos() * speed,
+        // );
+        let velocity = (
+            0.0,
+            0.0,
+            speed
+        );
+        Firebolt::new(self.location.clone(), velocity)
     }
 }
