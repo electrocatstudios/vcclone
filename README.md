@@ -32,6 +32,7 @@ to the videos when they are done.
 | Episode 7 | Try to get floor to work | [https://youtube.com/live/Xy_HCqXVXwI](https://youtube.com/live/Xy_HCqXVXwI) |
 | Episode 8 | We're going 3d | [https://youtube.com/live/C_BZLW9XH3E](https://youtube.com/live/C_BZLW9XH3E) |
 | Episode 9 | Adding Textures and Movement | [https://youtube.com/live/wNZUIhawEGA](https://youtube.com/live/C_BZLW9XH3E) |
+| Episode 10 | Adding Firebolt to player fire | [https://www.youtube.com/watch?v=5BQEPEF5RLc](https://www.youtube.com/watch?v=5BQEPEF5RLc) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
