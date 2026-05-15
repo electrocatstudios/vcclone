@@ -68,7 +68,7 @@ impl Firebolt {
 
             self.model.set_position(self.location.x, self.location.y, self.location.z);
             
-            if self.location.z > -4.0 {
+            if self.location.z > 9.0 {
                 self.destroy();
             }
 
