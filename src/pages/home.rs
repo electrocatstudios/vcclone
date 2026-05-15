@@ -12,10 +12,10 @@ impl Component for HomeControl {
         Self{}
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-
-        }
+    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        // match msg {
+        //     _ => {}
+        // }
         true
     }
 

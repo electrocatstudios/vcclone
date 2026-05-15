@@ -2,6 +2,7 @@ use web_sys::WebGlRenderingContext as GL;
 
 use crate::{model::model::Model, utils::Location3D};
 use crate::model::camera::Camera;
+use super::shard::Shard;
 
 #[derive(PartialEq)]
 enum FireboltState {
@@ -18,7 +19,7 @@ pub struct Firebolt {
     model: Model,
     state: FireboltState,
     cooldown: f64,
-    shards: Vec<Model>, // For explosion shards
+    shards: Vec<Shard>, // For explosion shards
 }
 
 impl Firebolt {
@@ -30,48 +31,12 @@ impl Firebolt {
         model.set_rotation(0.0, -std::f32::consts::PI/2.0, 0.0);
 
         let mut shards = Vec::new();
+        let num_shards = fastrand::usize(5..8);
+        for i in 0..num_shards {
+            let name = format!("shard_{}", i + 1);
+            shards.push(Shard::new(name));
+        }
         
-        let mut shard = Model::new("shard_1".to_string());
-        shard.set_gltf(include_str!("../../assets/gltf/shard1.gltf"));
-        shard.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
-        shard.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        shard.set_scale(0.05, 0.05, 0.05);
-
-        shards.push(shard);
-        
-        let mut shard = Model::new("shard_2".to_string());
-        shard.set_gltf(include_str!("../../assets/gltf/shard2.gltf"));
-        shard.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
-        shard.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        shard.set_scale(0.05, 0.05, 0.05);
-
-        shards.push(shard);
-        
-        let mut shard = Model::new("shard_3".to_string());
-        shard.set_gltf(include_str!("../../assets/gltf/shard3.gltf"));
-        shard.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
-        shard.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        shard.set_scale(0.05, 0.05, 0.05);
-
-        shards.push(shard);
-
-        
-        let mut shard = Model::new("shard_4".to_string());
-        shard.set_gltf(include_str!("../../assets/gltf/shard2.gltf"));
-        shard.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
-        shard.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        shard.set_scale(0.05, 0.05, 0.05);
-
-        shards.push(shard);
-
-        let mut shard = Model::new("shard_5".to_string());
-        shard.set_gltf(include_str!("../../assets/gltf/shard1.gltf"));
-        shard.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
-        shard.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        shard.set_scale(0.05, 0.05, 0.05);
-
-        shards.push(shard);
-
         Firebolt {
             location,
             velocity,
@@ -90,11 +55,7 @@ impl Firebolt {
         }
 
         for shard in self.shards.iter_mut() {
-            if shard.is_ready_to_load() {
-                shard.setup_shader(&gl, width, height);
-                shard.load_textures(&gl);
-                shard.setup(&gl);
-            }
+            shard.setup(gl, width, height);
         }
     }
 
@@ -120,21 +81,14 @@ impl Firebolt {
             };
 
             for shard in self.shards.iter_mut() {
-                let pos = shard.position;
-                shard.set_position(pos.x, pos.y - ((delta as f32) * 0.001), pos.z);
-
-                // shard.set_rotation(
-                //     shard.rotation.x + (self.cooldown * 0.01) as f32,
-                //     shard.rotation.y + (self.cooldown * 0.01) as f32,
-                //     shard.rotation.z + (self.cooldown * 0.01) as f32,
-                // );
+                shard.update(delta);
             }
         }
 
         
     }
 
-    pub fn get_location(&self) -> &Location3D {
+    pub fn _get_location(&self) -> &Location3D {
         &self.location
     }
 
@@ -145,14 +99,9 @@ impl Firebolt {
             }
         } else if self.state == FireboltState::Exploding {
              for shard in self.shards.iter_mut() {
-                 if shard.is_ready_to_render() {
-                    shard.render(ctx, time, camera);
-                }
+                shard.render(ctx, time, camera);
              }
         }
-        // if self.model.is_ready_to_render() {
-        //     self.model.render(ctx, time, camera);
-        // }
 
     }
 
@@ -160,15 +109,18 @@ impl Firebolt {
         gloo_console::log!("Firebolt hit something and is now exploding!");
         self.state = FireboltState::Exploding;
 
-        let mut x = -0.2;
-        let mut y = 0.2;
-
         for shard in self.shards.iter_mut() {
-            shard.set_position(self.location.x + x, self.location.y+y, self.location.z);
-            x += 0.1;
-            y -= 0.1;
-        }
+            let pos_x = self.location.x + (fastrand::f32() * 0.2 - 0.1); // Random position offset between -0.1 and 0.1
+            let pos_y = self.location.y + (fastrand::f32() * 0.2 - 0.1);
+            let pos_z = self.location.z;
 
+            shard.set_position(pos_x, pos_y, pos_z);
+            
+            let vel_x = fastrand::f32() * 0.01 - 0.005; // Random velocity between -0.01 and 0.01
+            let vel_y = fastrand::f32() * 0.004;
+            let vel_z = fastrand::f32() * 0.02 - 0.01;
+            shard.set_velocity(vel_x, vel_y, vel_z);
+        }
     }
 
     pub fn is_expired(&self) -> bool {

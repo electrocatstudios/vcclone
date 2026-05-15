@@ -1,12 +1,12 @@
 use yew::prelude::*;
 
 use web_sys::{window, HtmlCanvasElement, WebGlRenderingContext as GL};
-use web_sys::wasm_bindgen::{JsCast, JsValue, prelude::Closure};
+use web_sys::wasm_bindgen::{JsCast, prelude::Closure};
 use js_sys::Date;
 
 use gloo_console;
 
-use crate::assets::firebolt::{self, Firebolt};
+use crate::assets::firebolt::Firebolt;
 use crate::assets::skybox::Skybox;
 use crate::pages::viewmanager::ViewManager;
 use crate::player::keymanager::KeyManager;
@@ -212,7 +212,7 @@ impl GameControl {
         }
         self.game_update();
 
-        let mut gl = self.gl.as_ref().expect("GL Context not initialized!");
+        let gl = self.gl.as_ref().expect("GL Context not initialized!");
 
         for firebolt in self.firebolts.iter_mut() {
             firebolt.setup(gl, self.view_manager.width as f32, self.view_manager.height as f32);

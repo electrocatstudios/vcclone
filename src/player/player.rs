@@ -46,7 +46,7 @@ impl Player {
         self.look_rot
     }
 
-    pub fn render(&self, _ctx: GL) {
+    pub fn _render(&self, _ctx: GL) {
         // TODO: Draw the wand
     }
 

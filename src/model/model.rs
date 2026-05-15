@@ -95,7 +95,7 @@ impl Model {
         self.scale = Vector3D::new(x * self.base_scale.x, y * self.base_scale.y, z * self.base_scale.z);
     }
 
-    pub fn set_base_scale(&mut self, x: f32, y: f32, z: f32) {
+    pub fn _set_base_scale(&mut self, x: f32, y: f32, z: f32) {
         self.base_scale = Vector3D::new(x, y, z);
     }
 
