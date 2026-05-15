@@ -1,0 +1,86 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "count": 12,
+      "componentType": 5126,
+      "type": "VEC3",
+      "min": [
+        -0.5,
+        -0.5,
+        0.0
+      ],
+      "max": [
+        0.5,
+        0.5,
+        0.0
+      ]
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 12,
+      "count": 12,
+      "componentType": 5126,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 24,
+      "count": 12,
+      "componentType": 5126,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 32,
+      "count": 12,
+      "componentType": 5126,
+      "type": "VEC3"
+    }
+  ],
+  "asset": {
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "byteLength": 528,
+      "uri": "data:application/octet-stream;base64,AAAAPwAAAD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAC/AAAAPwAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAD8AAAC/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AAAAvwAAAD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAC/AAAAvwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAD8AAAC/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AAAAPwAAAD8AAAAAAACAPwAAgD8AAIA/AACAPwAAAAAAAACAAAAAgAAAgL8AAAA/AAAAvwAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAAIAAAACAAACAvwAAAL8AAAA/AAAAAAAAgD8AAIA/AACAPwAAAAAAAAAAAAAAgAAAAIAAAIC/AAAAvwAAAD8AAAAAAACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgL8AAAA/AAAAvwAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAACAvwAAAL8AAAC/AAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIC/"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 528,
+      "byteStride": 44,
+      "target": 34962
+    }
+  ],
+  "meshes": [
+    {
+      "name": "plane_mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 3,
+            "COLOR_0": 1,
+            "TEXCOORD_0": 2
+          }
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

@@ -2,15 +2,15 @@ from PIL import Image
 
 
 IMAGE_SIZE = 4096
-LIGHT_SANDSTONE = (212, 167, 74)
-DARK_SANDSTONE = (84, 67, 34)
+LIGHT_SANDSTONE = (212, 167, 74, 255)
+DARK_SANDSTONE = (84, 67, 34, 255)
 DOOR_WIDTH = 256
 DOOR_HEIGHT = 256
 
 if __name__ == "__main__":
     print("Starting skybox generation")
 
-    im = Image.new(mode='RGB', size=(IMAGE_SIZE,IMAGE_SIZE))
+    im = Image.new(mode='RGBA', size=(IMAGE_SIZE,IMAGE_SIZE), color=(0,0,0,255))
     # square 1
     start_x = 0
     end_x = int(IMAGE_SIZE / 4)
@@ -32,14 +32,21 @@ if __name__ == "__main__":
                 else:
                     im.putpixel((x,y), LIGHT_SANDSTONE)
 
-    # square 2
+    # square 2 - Ceiling
     start_x = int(IMAGE_SIZE / 4)
     end_x = int(IMAGE_SIZE / 2)
     start_y = int(IMAGE_SIZE / 4)
     end_y = int(IMAGE_SIZE / 2)
+    panel_width = (end_x - start_x)
+    panel_height = (end_y - start_y)
     for x in range(start_x, end_x):
         for y in range(start_y, end_y):
-            im.putpixel((x,y), (0,255,0))
+            if x < start_x + panel_width * 0.25 or x > start_x + panel_width * 0.75:
+                # if y < start_y + panel_height * 0.25 or y > start_y + panel_height * 0.75:
+                    im.putpixel((x,y), LIGHT_SANDSTONE)
+            else:
+                # im.putpixel((x,y), (0,0,0))
+                im.putpixel((x,y), (0,0,0,0))
 
     # square 3 - Backwall
     start_x = int(IMAGE_SIZE / 4)
@@ -56,7 +63,7 @@ if __name__ == "__main__":
     for x in range(start_x, end_x):
         for y in range(start_y, end_y):
             if x - (IMAGE_SIZE / 4) >= door_x_start and x - (IMAGE_SIZE / 4) < door_x_end and y > door_y_start and y < door_y_end:
-                im.putpixel((x,y), (25,25,25))
+                im.putpixel((x,y), (25,25,25,255))
                 continue
             out_x = (x % 64) / 64
             out_y = (y % 64) / 64
@@ -78,7 +85,7 @@ if __name__ == "__main__":
     end_y = int(IMAGE_SIZE * 0.75)
     for x in range(start_x, end_x):
         for y in range(start_y, end_y):
-            im.putpixel((x,y), (255,255,0))
+            im.putpixel((x,y), (255,255,0,255))
 
     # square 5
     start_x = int(IMAGE_SIZE * 0.75)
@@ -91,17 +98,17 @@ if __name__ == "__main__":
             out_y = (y % 64) / 64
             if out_x < 0.5:
                 if out_y < 0.5:
-                    im.putpixel((x,y), (255,255,255))
+                    im.putpixel((x,y), (255,255,255,255))
                 else:
-                    im.putpixel((x,y), (0,0,0))
+                    im.putpixel((x,y), (0,0,0,255))
             else:
                 if out_y < 0.5:
-                    im.putpixel((x,y), (0,0,0))
+                    im.putpixel((x,y), (0,0,0,255))
                 else:
-                    im.putpixel((x,y), (255,255,255))
+                    im.putpixel((x,y), (255,255,255,255))
                     
                 
-            # im.putpixel((x,y), (0,255,255))
+            # im.putpixel((x,y), (0,255,255,255))
 
 
     # square 6

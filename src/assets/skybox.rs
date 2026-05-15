@@ -6,6 +6,7 @@ use crate::model::{camera::Camera, model::Model};
 
 pub struct Skybox {
     pub model: Model,
+    pub night_sky: Model,
 }
 
 impl Skybox {
@@ -22,8 +23,21 @@ impl Skybox {
         model.set_position(0.0, 2.0, 0.0);
         model.set_rotation(0.0, 0.0, 0.0);
 
+        let mut night_sky = Model::new("night_sky".to_string());
+        night_sky.set_gltf(include_str!("../../assets/gltf/plane.gltf"));
+        night_sky.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
+        night_sky.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
+        
+        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/starry_sky.png"));
+        let data_url = format!("data:image/png;base64,{}", tex_b64);
+        night_sky.set_texture_base64(data_url);
+        night_sky.set_scale(20.0, 20.0, 20.0);
+        night_sky.set_position(0.0, 10.0, 0.0);
+        night_sky.set_rotation(-std::f32::consts::FRAC_PI_2, 0.0, 0.0);
+        
         Self {
             model: model,
+            night_sky: night_sky,
         }
     }
 
@@ -35,12 +49,19 @@ impl Skybox {
             self.model.setup(&gl);
         }
 
-        // self.model.update(delta);
+        if self.night_sky.is_ready_to_load() {
+            self.night_sky.setup_shader(&gl, width, height);
+            self.night_sky.load_textures(&gl);
+            self.night_sky.setup(&gl);
+        }
     }
 
     pub fn render(&mut self, gl: &GL, time: f64, camera: &Camera) {
         if self.model.is_ready_to_render() {
             self.model.render(gl, time, camera);
+        }
+        if self.night_sky.is_ready_to_render() {
+            self.night_sky.render(gl, time, camera);
         }
     }
 }

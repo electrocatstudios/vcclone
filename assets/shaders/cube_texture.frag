@@ -10,6 +10,11 @@ varying vec3 v_color_original;
 varying float v_time;
 
 void main() {
-    vec3 texture_color = texture2D(u_texture, v_texcoord).rgb;
-    gl_FragColor = vec4(texture_color, 1.0);
+    vec4 texture_color = texture2D(u_texture, v_texcoord);
+    // if (texture_color.a < 0.5) {
+    //     gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);
+    // } else {
+    gl_FragColor = texture_color;
+    // }
+    
 }

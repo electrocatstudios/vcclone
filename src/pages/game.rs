@@ -229,10 +229,12 @@ impl GameControl {
         );
         gl.clear_color(0.2, 0.8, 0.2, 1.0);
         gl.clear_depth(1.0);
-        
+        gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
         // Enable the depth test
         gl.enable(GL::DEPTH_TEST);
-
+        gl.enable(GL::BLEND);
+        gl.blend_func(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
+        
         // Clear the color buffer bit
         gl.clear(GL::COLOR_BUFFER_BIT);
 
