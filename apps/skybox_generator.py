@@ -1,11 +1,23 @@
 from PIL import Image
-
+import random
 
 IMAGE_SIZE = 4096
 LIGHT_SANDSTONE = (212, 167, 74, 255)
 DARK_SANDSTONE = (84, 67, 34, 255)
 DOOR_WIDTH = 256
 DOOR_HEIGHT = 256
+
+CEILING_MIN_STEP = 0.15
+CEILING_MAX_STEP = 0.4
+NUMBER_OF_CEILING_STEPS = 32
+
+def get_steps_for_ceiling():
+    steps = []
+    for _ in range(NUMBER_OF_CEILING_STEPS):
+        ran = random.random()
+        step = CEILING_MIN_STEP + ran * (CEILING_MAX_STEP - CEILING_MIN_STEP)
+        steps.append(step * (IMAGE_SIZE / 4))
+    return steps
 
 if __name__ == "__main__":
     print("Starting skybox generation")
@@ -39,9 +51,14 @@ if __name__ == "__main__":
     end_y = int(IMAGE_SIZE / 2)
     panel_width = (end_x - start_x)
     panel_height = (end_y - start_y)
+    left_steps = get_steps_for_ceiling()
+    right_steps = get_steps_for_ceiling()
+    right_steps = [panel_width - step for step in right_steps]
     for x in range(start_x, end_x):
         for y in range(start_y, end_y):
-            if x < start_x + panel_width * 0.25 or x > start_x + panel_width * 0.75:
+            step_index = int((y - start_y) / panel_height * NUMBER_OF_CEILING_STEPS)
+            # print(step_index)
+            if x < start_x + left_steps[step_index] or x > start_x + right_steps[step_index]:
                 # if y < start_y + panel_height * 0.25 or y > start_y + panel_height * 0.75:
                     im.putpixel((x,y), LIGHT_SANDSTONE)
             else:

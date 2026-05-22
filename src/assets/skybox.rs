@@ -15,7 +15,8 @@ impl Skybox {
         model.set_gltf(include_str!("../../assets/gltf/skybox.gltf"));
         model.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
         model.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
-
+        model.set_use_transparency(true);
+        
         let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/skybox.png"));
         let data_url = format!("data:image/png;base64,{}", tex_b64);
         model.set_texture_base64(data_url);
@@ -31,8 +32,8 @@ impl Skybox {
         let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/starry_sky.png"));
         let data_url = format!("data:image/png;base64,{}", tex_b64);
         night_sky.set_texture_base64(data_url);
-        night_sky.set_scale(20.0, 20.0, 20.0);
-        night_sky.set_position(0.0, 10.0, 0.0);
+        night_sky.set_scale(20.0, 40.0, 20.0);
+        night_sky.set_position(0.0, 8.0, 18.0);
         night_sky.set_rotation(-std::f32::consts::FRAC_PI_2, 0.0, 0.0);
         
         Self {
@@ -57,11 +58,12 @@ impl Skybox {
     }
 
     pub fn render(&mut self, gl: &GL, time: f64, camera: &Camera) {
-        if self.model.is_ready_to_render() {
-            self.model.render(gl, time, camera);
-        }
         if self.night_sky.is_ready_to_render() {
             self.night_sky.render(gl, time, camera);
         }
+        if self.model.is_ready_to_render() {
+            self.model.render(gl, time, camera);
+        }
+        
     }
 }

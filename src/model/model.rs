@@ -90,6 +90,10 @@ impl Model {
         self.gltf = Some(gltf_json);
     }
 
+    pub fn set_use_transparency(&mut self, use_transparency: bool) {
+        self.use_transparency = use_transparency;
+    }
+
     pub fn set_scale(&mut self, x: f32, y: f32, z: f32) {
         // gloo_console::log!("Applying scale factor: ", self.scale_factor, x * self.scale_factor * 0.1, y);
         self.scale = Vector3D::new(x * self.base_scale.x, y * self.base_scale.y, z * self.base_scale.z);
