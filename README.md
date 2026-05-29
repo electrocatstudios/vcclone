@@ -1,5 +1,5 @@
 # vcclone
-A simple 2d game in the spirit of virtua-cop
+A simple 3d game in the spirit of virtua-cop
 
 ![Progress Pic after Episode 9](/docs/ep12_screenshot.png)
 
