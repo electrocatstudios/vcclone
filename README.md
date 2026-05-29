@@ -35,6 +35,7 @@ to the videos when they are done.
 | Episode 10 | Adding Firebolt to player fire | [https://www.youtube.com/watch?v=5BQEPEF5RLc](https://www.youtube.com/watch?v=5BQEPEF5RLc) |
 | Episode 11 | Adding shards to exploding Firebolt | [https://youtube.com/live/3_Qa7YcIEJs](https://youtube.com/live/3_Qa7YcIEJs) |
 | Episode 12 | Fix ceiling transparency and Enemy Head Modelling | [https://youtube.com/live/VAr0bDZBqjA](https://youtube.com/live/VAr0bDZBqjA) |
+| Episode 13 | Create Enemy Body and Arms | [https://youtube.com/live/sMKVfQcFAJk](https://youtube.com/live/sMKVfQcFAJk) | 
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
