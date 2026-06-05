@@ -1,7 +1,9 @@
 # vcclone
 A simple 3d game in the spirit of virtua-cop
 
-![Progress Pic after Episode 9](/docs/ep12_screenshot.png)
+![Progress Pic after Episode 14](/docs/enemy_character_screenshot.png)
+
+![Progress Gif after Episode 14](/docs/enemy_shoot.gif)
 
 An earlier screenshot with the enemies (from when it was a 2D project):
 
