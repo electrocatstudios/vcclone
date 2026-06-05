@@ -36,6 +36,7 @@ to the videos when they are done.
 | Episode 11 | Adding shards to exploding Firebolt | [https://youtube.com/live/3_Qa7YcIEJs](https://youtube.com/live/3_Qa7YcIEJs) |
 | Episode 12 | Fix ceiling transparency and Enemy Head Modelling | [https://youtube.com/live/VAr0bDZBqjA](https://youtube.com/live/VAr0bDZBqjA) |
 | Episode 13 | Create Enemy Body and Arms | [https://youtube.com/live/sMKVfQcFAJk](https://youtube.com/live/sMKVfQcFAJk) | 
+| Episode 14 | Finish Enemy Model and Put Into Game | [https://youtube.com/live/y-VyePsAEtc](https://youtube.com/live/y-VyePsAEtc) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 

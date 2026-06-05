@@ -6,10 +6,11 @@ use js_sys::Date;
 
 use gloo_console;
 
-use crate::assets::firebolt::Firebolt;
-use crate::assets::skybox::Skybox;
+use crate::assets::{firebolt::Firebolt, skybox::Skybox};
 use crate::pages::viewmanager::ViewManager;
 use crate::player::keymanager::KeyManager;
+use crate::characters::enemy::{self, Enemy};
+use crate::utils::Location3D;
 
 use crate::player::player::Player;
 use crate::{GAME_HEIGHT, GAME_WIDTH};
@@ -34,7 +35,7 @@ pub struct GameControl {
     view_manager: ViewManager,
     skybox: Skybox,
     key_manager: KeyManager,
-    // enemies: Vec::<EnemyWizard>,
+    enemies: Vec::<Enemy>,
     // lightning_bolts: Vec::<LightningBolt>,
     player: Player,
     // fireballs: Vec::<Fireball>,
@@ -50,6 +51,9 @@ impl Component for GameControl {
         let comp_ctx = ctx.link().clone();
         let callback = Closure::wrap(Box::new(move || comp_ctx.send_message(GameMsg::Render)) as Box<dyn FnMut()>);
 
+
+        let mut vec_enemies = Vec::<Enemy>::new();
+        vec_enemies.push(Enemy::new(Location3D { x: 0.0, y: 0.3, z: -7.0 }));
         // Create walls        
         Self{
             last_x: 0.0,
@@ -62,7 +66,7 @@ impl Component for GameControl {
             view_manager: ViewManager::new(),
             skybox: Skybox::new(),
             key_manager: KeyManager::new(),
-            // enemies: Vec::<EnemyWizard>::new(),
+            enemies: vec_enemies,
             // lightning_bolts: Vec::<LightningBolt>::new(),
             player: Player::new(),
             // fireballs: Vec::<Fireball>::new(),
@@ -199,6 +203,9 @@ impl GameControl {
         for firebolt in self.firebolts.iter_mut() {
             firebolt.update(delta);
         }
+        for enemy in self.enemies.iter_mut() {
+            enemy.update(delta);
+        }
 
     }
 
@@ -217,6 +224,10 @@ impl GameControl {
         for firebolt in self.firebolts.iter_mut() {
             firebolt.setup(gl, self.view_manager.width as f32, self.view_manager.height as f32);
         }
+        for enemy in self.enemies.iter_mut() {
+            enemy.setup(gl, self.view_manager.width as f32, self.view_manager.height as f32);
+        }
+
         self.view_manager.update(gl);
         self.skybox.update(self.view_manager.delta, gl, self.view_manager.width as f32, self.view_manager.height as f32);
    
@@ -242,6 +253,9 @@ impl GameControl {
 
         for firebolt in self.firebolts.iter_mut() {
             firebolt.render(gl, self.view_manager.u_time as f64, &self.view_manager.camera);
+        }
+        for enemy in self.enemies.iter_mut() {
+            enemy.render(gl, self.view_manager.u_time as f64, &self.view_manager.camera);
         }
         // Debug Information
         // ctx.set_fill_style(&JsValue::from("rgb(255,0,0)"));
