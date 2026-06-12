@@ -2,6 +2,7 @@ use web_sys::WebGlRenderingContext as GL;
 
 use crate::{model::model::Model, utils::Location3D};
 use crate::model::camera::Camera;
+use crate::consts::*;
 
 #[derive(PartialEq)]
 enum EnemyState {
@@ -17,6 +18,7 @@ pub struct Enemy {
     right_arm_model: Model,
     left_shoe_model: Model,
     right_shoe_model: Model,
+    destination: Location3D,
     state: EnemyState,
 }
 
@@ -65,6 +67,12 @@ impl Enemy {
         right_shoe_model.set_rotation(0.0, 0.0, 0.0); 
         right_shoe_model.set_scale(0.375, 0.5, 0.5); // Scale down the shoe model to fit the character
         
+        let destination = Location3D {
+            x: position.x,
+            y: position.y,
+            z: position.z,
+        };
+
         Enemy {
             position: position,
             rotation: 0.0,
@@ -74,6 +82,7 @@ impl Enemy {
             right_arm_model: right_arm_model,
             left_shoe_model: left_shoe_model,
             right_shoe_model: right_shoe_model,
+            destination: destination,
             state: EnemyState::Idle,
         }
     }
@@ -116,33 +125,57 @@ impl Enemy {
         }
     }
 
-    pub fn update(&mut self, delta: f64) {
-        self.rotation += 0.001 * delta as f32; // Rotate the enemy over time
+    fn set_new_destination(&mut self) {
+        // For simplicity, we'll just move the enemy in a random direction within a certain range
+        // let range = 5.0;
+        self.destination.x = (rand::random::<f32>() * 4.0) - 2.0;//self.position.x + (rand::random::<f32>() - 0.5) * range;
+        self.destination.z = (rand::random::<f32>() * 16.0) - 7.0;//self.position.z + (rand::random::<f32>() - 0.5) * range;
+   
+    }
 
-        self.position.x -= 0.01 * self.rotation.cos(); // Move the enemy in a circular pattern
-        self.position.z -= 0.01 * self.rotation.sin();
+    pub fn update(&mut self, delta: f64) {
+        let target_angle = self.get_target_angle();//self.destination.z.atan2(self.destination.x);
+        if self.position.x < self.destination.x + 0.1 && self.position.x > self.destination.x - 0.1 &&
+           self.position.z < self.destination.z + 0.1 && self.position.z > self.destination.z - 0.1 {
+            self.set_new_destination();
+        } else if (self.rotation - target_angle).abs() > 0.01 {
+            let angle_diff = (target_angle - self.rotation).abs();
+            if angle_diff < ENEMY_ROTATION_SPEED {
+                self.rotation = target_angle; // Snap to the target angle if we're close enough
+            } else {
+                self.rotation += ENEMY_ROTATION_SPEED * (target_angle - self.rotation).signum(); // Rotate towards the target angle
+            }
+
+        } else if self.position.x != self.destination.x || self.position.z != self.destination.z {
+            self.rotation = target_angle; // Ensure the enemy is facing the destination
+            self.position.x += ENEMY_MOVE_SPEED * target_angle.cos() * delta as f32; // Move towards the destination
+            self.position.z += ENEMY_MOVE_SPEED * target_angle.sin() * delta as f32;
+        } else {
+            self.set_new_destination();
+        }
+        let rot = self.rotation + std::f32::consts::FRAC_PI_2;
 
         self.head_model.set_position(self.position.x, self.position.y + 0.185, self.position.z);
-        self.head_model.set_rotation(0.0, self.rotation, 0.0);
+        self.head_model.set_rotation(0.0, rot, 0.0);
 
         self.body_model.set_position(self.position.x, self.position.y, self.position.z);
-        self.body_model.set_rotation(0.0, self.rotation, 0.0);
+        self.body_model.set_rotation(0.0, rot, 0.0);
 
-        self.left_arm_model.set_position(self.position.x + (0.15 * self.rotation.cos()) , self.position.y, self.position.z + (0.15 * self.rotation.sin()));
-        self.left_arm_model.set_rotation(0.0, self.rotation, 0.0);
+        self.left_arm_model.set_position(self.position.x + (0.15 * rot.cos()) , self.position.y, self.position.z + (0.15 * rot.sin()));
+        self.left_arm_model.set_rotation(0.0, rot, 0.0);
 
-        self.right_arm_model.set_position(self.position.x - (0.15 * self.rotation.cos()), self.position.y, self.position.z - (0.15 * self.rotation.sin()));
-        self.right_arm_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
+        self.right_arm_model.set_position(self.position.x - (0.15 * rot.cos()), self.position.y, self.position.z - (0.15 * rot.sin()));
+        self.right_arm_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
 
-        let shoe_offset_x = (0.0625 * self.rotation.cos()) + (0.055 * self.rotation.sin());
-        let shoe_offset_z =  (0.0625 * self.rotation.sin()) - (0.055 * self.rotation.cos()); // Distance from the center of the body to the shoe
+        let shoe_offset_x = (0.0625 * rot.cos()) + (0.055 * rot.sin());
+        let shoe_offset_z =  (0.0625 * rot.sin()) - (0.055 * rot.cos()); // Distance from the center of the body to the shoe
         self.left_shoe_model.set_position(self.position.x + shoe_offset_x, self.position.y - 0.3, self.position.z + shoe_offset_z);
-        self.left_shoe_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
+        self.left_shoe_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
         
-        let shoe_offset_x = (0.0625 * self.rotation.cos()) - (0.055 * self.rotation.sin());
-        let shoe_offset_z =  (0.0625 * self.rotation.sin()) + (0.055 * self.rotation.cos()); // Distance from the center of the body to the shoe
+        let shoe_offset_x = (0.0625 * rot.cos()) - (0.055 * rot.sin());
+        let shoe_offset_z =  (0.0625 * rot.sin()) + (0.055 * rot.cos()); // Distance from the center of the body to the shoe
         self.right_shoe_model.set_position(self.position.x - shoe_offset_x, self.position.y - 0.3, self.position.z - shoe_offset_z);
-        self.right_shoe_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
+        self.right_shoe_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
     }
 
     pub fn render(&mut self, gl: &GL, time: f64, camera: &Camera) {
@@ -168,4 +201,63 @@ impl Enemy {
 
     }
 
+    pub fn get_location(&self) -> Location3D {
+        self.position
+    }
+
+    pub fn get_destination(&self) -> Location3D {
+        self.destination
+    }
+
+    pub fn get_rotation(&self) -> f32 {
+        self.rotation
+    }
+    pub fn get_target_angle(&self) -> f32 {
+        let diff_x: f32 = self.destination.x - self.position.x;
+        let diff_z: f32 = self.destination.z - self.position.z;
+        diff_z.atan2(diff_x)
+    }
+}
+
+
+#[cfg(test)]
+mod enemy_tests {
+    use super::*;
+
+    #[test]
+    fn test_tan2() {
+        // self.destination.z.atan2(self.destination.x)
+        let loc_x: f32 = 0.0;
+        let loc_z: f32 = 0.0;
+
+        let dest_x: f32 = 1.0;
+        let dest_z: f32 = 0.0;
+        
+        let diff_x: f32 = dest_x - loc_x;
+        let diff_z: f32 = dest_z - loc_z;
+        let angle: f32 = diff_z.atan2(diff_x);
+        assert_eq!(angle, 0.0);
+
+        let dest_z = 1.0;
+        let dest_x = 0.0;
+        let diff_x: f32 = dest_x - loc_x;
+        let diff_z: f32 = dest_z - loc_z;
+        let angle: f32 = diff_z.atan2(diff_x);
+        assert_eq!(angle, std::f32::consts::FRAC_PI_2);
+
+
+        // let position = Location3D { x: 0.0, y: 0.0, z: 0.0 };
+        // let enemy = Enemy::new(position);
+        // assert_eq!(enemy.get_location(), position);
+        // assert_eq!(enemy.get_rotation(), 0.0);
+    }
+
+    // #[test]
+    // fn test_enemy_movement() {
+    //     let mut enemy = Enemy::new(Location3D { x: 0.0, y: 0.0, z: 0.0 });
+    //     enemy.destination = Location3D { x: 1.0, y: 0.0, z: 1.0 };
+    //     enemy.update(1000.0); // Simulate a large delta to ensure movement
+    //     let new_location = enemy.get_location();
+    //     assert!(new_location.x > 0.0 && new_location.z > 0.0); // Enemy should have moved towards the destination
+    // }
 }

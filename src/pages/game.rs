@@ -206,7 +206,24 @@ impl GameControl {
         if let Some(window) = web_sys::window() {
             if let Some(document) = window.document() {
                 if let Some(el) = document.get_element_by_id("debug_info") {
-                    let text = format!("Player Location: ({:.2}, {:.2}, {:.2}) Look At: ({:.2}, {:.2})", player_loc.x, player_loc.y, player_loc.z, look_at.0, look_at.1);
+                    
+                    let first_line = format!("Player Location: ({:.2}, {:.2}, {:.2}) Look At: ({:.2}, {:.2})", player_loc.x, player_loc.y, player_loc.z, look_at.0, look_at.1);
+                    let enemy = self.enemies.first();
+                    let second_line = if let Some(enemy) = enemy {
+                        let enemy_loc = enemy.get_location();
+                        let enemy_dest = enemy.get_destination();
+                        let enemy_rot = enemy.get_rotation();
+                        let enemy_target_angle = enemy.get_target_angle();
+                        
+                        let enemy_line = format!("Enemy Location: ({:.2}, {:.2}, {:.2}) -> ({:.2}, {:.2}, {:.2}) Rotation: {:.2} Target Angle: {:.2}", enemy_loc.x, enemy_loc.y, enemy_loc.z, enemy_dest.x, enemy_dest.y, enemy_dest.z, enemy_rot, enemy_target_angle);
+                        // let text = format!("{} <br> {} <br> Player Rotation: ({:.2}, {:.2})", first_line, enemy_line, self.player.rotation.0, self.player.rotation.1);
+                        // el.set_inner_html(&text);
+                        enemy_line
+                    } else {
+                        format!("No enemies")
+                    };
+                    // let second_line = format!("Player Rotation: ({:.2}, {:.2})", self.player.rotation.0, self.player.rotation.1);
+                    let text = format!("{} <br> {}", first_line, second_line);
                     el.set_inner_html(&text);
                 }
             }

@@ -39,6 +39,7 @@ to the videos when they are done.
 | Episode 12 | Fix ceiling transparency and Enemy Head Modelling | [https://youtube.com/live/VAr0bDZBqjA](https://youtube.com/live/VAr0bDZBqjA) |
 | Episode 13 | Create Enemy Body and Arms | [https://youtube.com/live/sMKVfQcFAJk](https://youtube.com/live/sMKVfQcFAJk) | 
 | Episode 14 | Finish Enemy Model and Put Into Game | [https://youtube.com/live/y-VyePsAEtc](https://youtube.com/live/y-VyePsAEtc) |
+| Episode 15 | Make Enemy Model Move and Aim Firebolt | [https://youtube.com/live/c1CKT7c_u_w](https://youtube.com/live/c1CKT7c_u_w) |
 
 *The original Episode 2 was a bit of a disaster as I didn't realise you had to push the "Start Stream" button on 
 YouTube as well as on OBS. So I have saved the code on this [Branch](https://github.com/electrocatstudios/vcclone/tree/stream-2-no-live-disaster). 
