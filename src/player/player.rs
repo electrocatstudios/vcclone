@@ -73,16 +73,18 @@ impl Player {
 
     pub fn cast_firebolt(&self) -> Firebolt {
         let speed = 0.01;
-        // let velocity = (
-        //     self.look_rot.1.sin() * self.look_rot.0.cos() * speed,
-        //     self.look_rot.0.sin() * speed,
-        //     self.look_rot.1.cos() * self.look_rot.0.cos() * speed,
-        // );
+        let y = self.location.y - (self.look_rot.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
+        
+        let rot_y = self.look_rot.0 * 0.5;
+        let rot_x = -self.look_rot.1 * 0.1 ;
+
+        let x = (-rot_y.sin() * 0.5) * speed;
+        let z = (rot_y.cos()) * speed;
         let velocity = (
-            0.0,
-            0.0,
-            speed
+            x,
+            rot_x.sin() * speed,
+            z
         );
-        Firebolt::new(self.location.clone(), velocity)
+        Firebolt::new(self.location.clone(), velocity, (rot_y * 0.5, rot_x))
     }
 }

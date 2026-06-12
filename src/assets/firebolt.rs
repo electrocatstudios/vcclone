@@ -23,12 +23,12 @@ pub struct Firebolt {
 }
 
 impl Firebolt {
-    pub fn new(location: Location3D, velocity: (f32, f32, f32)) -> Self {
+    pub fn new(location: Location3D, velocity: (f32, f32, f32), model_rotation: (f32, f32)) -> Self {
         let mut model = Model::new("firebolt".to_string()); // Load the firebolt model here
         model.set_gltf(include_str!("../../assets/gltf/firebolt.gltf"));
         model.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
         model.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        model.set_rotation(0.0, -std::f32::consts::PI/2.0, 0.0);
+        model.set_rotation(0.0, -std::f32::consts::PI/2.0 + model_rotation.0, model_rotation.1);
 
         let mut shards = Vec::new();
         let num_shards = fastrand::usize(5..8);
@@ -69,6 +69,8 @@ impl Firebolt {
             self.model.set_position(self.location.x, self.location.y, self.location.z);
             
             if self.location.z > 9.0 {
+                self.destroy();
+            } else if self.location.x < -2.0 || self.location.x > 2.0 || self.location.y < 0.0 {
                 self.destroy();
             }
 

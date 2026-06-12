@@ -154,6 +154,8 @@ impl Component for GameControl {
                     tabindex="0"
                     >
                 </canvas>
+                <div id="debug_info">{"Debug"}</div>
+                <div id="sight"></div>
             </div>
         }
     }
@@ -199,6 +201,16 @@ impl GameControl {
         let y = player_loc.y - (look_at.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
 
         self.view_manager.camera.look_at(x, y, 0.0);
+
+        // let debug = 
+        if let Some(window) = web_sys::window() {
+            if let Some(document) = window.document() {
+                if let Some(el) = document.get_element_by_id("debug_info") {
+                    let text = format!("Player Location: ({:.2}, {:.2}, {:.2}) Look At: ({:.2}, {:.2})", player_loc.x, player_loc.y, player_loc.z, look_at.0, look_at.1);
+                    el.set_inner_html(&text);
+                }
+            }
+        }
 
         for firebolt in self.firebolts.iter_mut() {
             firebolt.update(delta);

@@ -51,6 +51,11 @@ impl Shard {
         self.position.y += self.velocity.y * (delta_time as f32);
         self.position.z += self.velocity.z * (delta_time as f32);
 
+        if self.position.y < 0.1 {
+            self.position.y = 0.1;
+            self.velocity.y *= -0.4; // Bounce with some energy loss
+        }
+
         self.model.set_position(self.position.x, self.position.y, self.position.z);
     }
 
