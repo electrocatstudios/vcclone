@@ -117,13 +117,32 @@ impl Enemy {
     }
 
     pub fn update(&mut self, delta: f64) {
-        self.head_model.set_position(self.position.x, self.position.y + 0.185, self.position.z);
-        self.body_model.set_position(self.position.x, self.position.y, self.position.z);
-        self.left_arm_model.set_position(self.position.x + 0.15, self.position.y, self.position.z);
-        self.right_arm_model.set_position(self.position.x - 0.15, self.position.y, self.position.z);
+        self.rotation += 0.001 * delta as f32; // Rotate the enemy over time
 
-        self.left_shoe_model.set_position(self.position.x + 0.0625, self.position.y - 0.3, self.position.z - 0.055);
-        self.right_shoe_model.set_position(self.position.x - 0.0625, self.position.y - 0.3, self.position.z - 0.055);
+        self.position.x -= 0.01 * self.rotation.cos(); // Move the enemy in a circular pattern
+        self.position.z -= 0.01 * self.rotation.sin();
+
+        self.head_model.set_position(self.position.x, self.position.y + 0.185, self.position.z);
+        self.head_model.set_rotation(0.0, self.rotation, 0.0);
+
+        self.body_model.set_position(self.position.x, self.position.y, self.position.z);
+        self.body_model.set_rotation(0.0, self.rotation, 0.0);
+
+        self.left_arm_model.set_position(self.position.x + (0.15 * self.rotation.cos()) , self.position.y, self.position.z + (0.15 * self.rotation.sin()));
+        self.left_arm_model.set_rotation(0.0, self.rotation, 0.0);
+
+        self.right_arm_model.set_position(self.position.x - (0.15 * self.rotation.cos()), self.position.y, self.position.z - (0.15 * self.rotation.sin()));
+        self.right_arm_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
+
+        let shoe_offset_x = (0.0625 * self.rotation.cos()) + (0.055 * self.rotation.sin());
+        let shoe_offset_z =  (0.0625 * self.rotation.sin()) - (0.055 * self.rotation.cos()); // Distance from the center of the body to the shoe
+        self.left_shoe_model.set_position(self.position.x + shoe_offset_x, self.position.y - 0.3, self.position.z + shoe_offset_z);
+        self.left_shoe_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
+        
+        let shoe_offset_x = (0.0625 * self.rotation.cos()) - (0.055 * self.rotation.sin());
+        let shoe_offset_z =  (0.0625 * self.rotation.sin()) + (0.055 * self.rotation.cos()); // Distance from the center of the body to the shoe
+        self.right_shoe_model.set_position(self.position.x - shoe_offset_x, self.position.y - 0.3, self.position.z - shoe_offset_z);
+        self.right_shoe_model.set_rotation(0.0, self.rotation + std::f32::consts::PI, 0.0);
     }
 
     pub fn render(&mut self, gl: &GL, time: f64, camera: &Camera) {
