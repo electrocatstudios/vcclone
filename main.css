@@ -1,6 +1,8 @@
 html, body {
     margin: 0;
     padding: 0;
+    padding-top: 50px;
+    text-align: center;
 }
 
 body {
@@ -26,4 +28,27 @@ a {
 
 canvas {
     cursor: none;
+    /* margin-left: auto; */
+    /* margin-right: auto; */
+}
+
+#debug_info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+#sight {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px; /* Half of the width to center it */
+    margin-top: -10px; /* Half of the height to center it */
+    border: 2px solid red;
+    border-radius: 50%;
 }
