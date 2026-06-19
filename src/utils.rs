@@ -2,7 +2,15 @@ use base64::prelude::*;
 use gltf_json::{Accessor, accessor::{self, ComponentType}, mesh::Semantic, validation::Checked};
 use gltf_json::mesh::*;
 
+use wasm_bindgen::JsValue;
+
 use gloo_console::log;
+
+
+pub async fn center_cursor_tauri() -> Result<(), String> {
+    crate::invoke("center_cursor", JsValue::NULL).await;
+    Ok(())
+}
 
 #[derive(Clone, Copy)]
 pub struct _LocationRotation2D {

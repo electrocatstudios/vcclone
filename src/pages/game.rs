@@ -102,8 +102,8 @@ impl Component for GameControl {
                 let x_diff = evt.0 - self.last_x;
                 let y_diff = evt.1 - self.last_y;
 
-                self.last_x = evt.0;
-                self.last_y = evt.1;
+                self.last_x = 1200.0 / 2.0; // Reset to center of the canvas
+                self.last_y = 900.0 / 2.0;
 
                 self.player.look(x_diff as f32, y_diff as f32); 
                 // self.last_action = "Mouse Move".to_string();
@@ -132,6 +132,14 @@ impl Component for GameControl {
             GameMsg::MouseUp(( evt.page_x() as f64, evt.page_y() as f64) )
         });
         let onmousemove = ctx.link().callback(move |evt:MouseEvent| {
+
+            wasm_bindgen_futures::spawn_local(async move {
+                // Call the Tauri command to center the cursor
+                if let Err(e) = crate::utils::center_cursor_tauri().await {
+                    gloo_console::error!("Failed to center cursor:", e);
+                }
+            });
+
             GameMsg::MouseMove(( evt.page_x() as f64, evt.page_y() as f64) )
         });
         let onkeydown = ctx.link().callback(move |evt:KeyboardEvent| {

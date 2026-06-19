@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
+use wasm_bindgen::prelude::*;
 
 mod pages;
 mod model;
@@ -42,6 +43,12 @@ fn app_body() -> Html {
             <Switch<Route> render={switch} /> 
         </BrowserRouter>
     }
+}
+
+#[wasm_bindgen]
+unsafe extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI_INTERNALS__"], js_name = invoke)]
+    pub async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
 fn main() {
