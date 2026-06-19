@@ -17,7 +17,7 @@ impl Shard {
         model.set_gltf(include_str!("../../assets/gltf/shard1.gltf"));
         model.set_frag_shader(include_str!("../../assets/shaders/no_texture_color.frag").to_string());
         model.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        model.set_scale(0.05, 0.05, 0.05);
+        model.set_scale(0.03, 0.03, 0.03);
 
         let red = 1.0;
         let green = fastrand::f32() * 0.5 + 0.5;

@@ -150,21 +150,24 @@ impl Component for GameControl {
         });
 
         html! {
-            <div class="game_canvas">
-                <canvas id="canvas"
-                    style={"margin: 0px; width: 800px; height: 600px; left: 0px; top:0px;"}
-                    ref={self.node_ref.clone()}
-                    onkeydown={onkeydown}
-                    onkeyup={onkeyup}
-                    onmousedown={onmousedown}
-                    onmouseup={onmouseup}
-                    onmousemove={onmousemove}
-                    tabindex="0"
-                    >
-                </canvas>
+            <>
+                <div class="game_canvas">
+                    <canvas id="canvas"
+                        style={"width: 800px; height: 600px;"}
+                        ref={self.node_ref.clone()}
+                        onkeydown={onkeydown}
+                        onkeyup={onkeyup}
+                        onmousedown={onmousedown}
+                        onmouseup={onmouseup}
+                        onmousemove={onmousemove}
+                        tabindex="0"
+                        >
+                    </canvas>
+                    
+                    <div id="sight"></div>
+                </div>
                 <div id="debug_info">{"Debug"}</div>
-                <div id="sight"></div>
-            </div>
+            </>
         }
     }
 
@@ -204,18 +207,18 @@ impl GameControl {
         self.view_manager.camera.move_camera(player_loc.x, player_loc.y, player_loc.z);
 
         let look_at = self.player.get_look_rotation();
-    
-        let x = player_loc.x - look_at.0;
-        let y = player_loc.y - (look_at.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
-
-        self.view_manager.camera.look_at(x, y, 0.0);
+        
+        let x = player_loc.x + (look_at.0.sin());
+        let y = player_loc.y - (look_at.1.sin());
+        let z = player_loc.z + (look_at.0.cos());
+        self.view_manager.camera.look_at(x, y, z);
 
         // let debug = 
         if let Some(window) = web_sys::window() {
             if let Some(document) = window.document() {
                 if let Some(el) = document.get_element_by_id("debug_info") {
                     
-                    let first_line = format!("Player Location: ({:.2}, {:.2}, {:.2}) Look At: ({:.2}, {:.2})", player_loc.x, player_loc.y, player_loc.z, look_at.0, look_at.1);
+                    let first_line = format!("Player Location: ({:.2}, {:.2}, {:.2}) Player Rot: ({:.2}, {:.2})", player_loc.x, player_loc.y, player_loc.z, look_at.0, look_at.1);
                     let enemy = self.enemies.first();
                     let second_line = if let Some(enemy) = enemy {
                         let enemy_loc = enemy.get_location();

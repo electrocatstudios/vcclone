@@ -51,40 +51,53 @@ impl Player {
     }
 
     pub fn look(&mut self, x_diff: f32, y_diff: f32) {
-        self.look_rot.0 += x_diff * 0.005;
+        self.look_rot.0 -= x_diff * 0.005;
         self.look_rot.1 += y_diff * 0.005;
-
+   
         // Clamp the vertical look rotation to prevent flipping
-        if self.look_rot.0 > std::f32::consts::FRAC_PI_2 {
-            self.look_rot.0 = std::f32::consts::FRAC_PI_2;
+        if self.look_rot.0 > std::f32::consts::PI / 4.0 {
+            self.look_rot.0 = std::f32::consts::PI / 4.0;
         }
-        if self.look_rot.0 < -std::f32::consts::FRAC_PI_2 {
-            self.look_rot.0 = -std::f32::consts::FRAC_PI_2;
+        if self.look_rot.0 < -std::f32::consts::PI / 4.0  {
+            self.look_rot.0 = -std::f32::consts::PI / 4.0 ;
         }
 
-        if self.look_rot.1 > std::f32::consts::PI {
-            self.look_rot.1 = std::f32::consts::PI;
+        if self.look_rot.1 > std::f32::consts::PI / 4.0 {
+            self.look_rot.1 = std::f32::consts::PI / 4.0;
         }
-        if self.look_rot.1 < -std::f32::consts::PI * 1.2 {
-            self.look_rot.1 = -std::f32::consts::PI * 1.2;
+        if self.look_rot.1 < -std::f32::consts::PI / 4.0 {
+            self.look_rot.1 = -std::f32::consts::PI / 4.0;
         }
         // gloo_console::log!("Look rotation: ", self.look_rot.0, self.look_rot.1);
     }
 
     pub fn cast_firebolt(&self) -> Firebolt {
-        let speed = 0.01;
-        let y = self.location.y - (self.look_rot.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
+        // Location
+        let look_at = self.look_rot;
         
-        let rot_y = self.look_rot.0 * 0.5;
-        let rot_x = -self.look_rot.1 * 0.1 ;
+        let x = self.location.x + (look_at.0.sin());
+        let y = self.location.y - (look_at.1.sin());
+        let z = self.location.z + (look_at.0.cos());
+        let location = Location3D::new(x, y, z);
+        
+        let speed = 0.03;
+        // let y = self.location.y - (self.look_rot.1 - std::f32::consts::PI * 0.5); // Add 90 degrees to look downwards by default
+        let y = 0.0;
 
-        let x = (-rot_y.sin() * 0.5) * speed;
-        let z = (rot_y.cos()) * speed;
+        // let rot_y = self.look_rot.0;
+        let rot_x = -self.look_rot.1 ;
         let velocity = (
-            x,
+            self.look_rot.0.sin() * speed,
             rot_x.sin() * speed,
-            z
+            self.look_rot.0.cos() * speed
         );
-        Firebolt::new(self.location.clone(), velocity, (rot_y * 0.5, rot_x))
+        // let x = (-rot_y.sin() * 0.5) * speed;
+        // let z = (rot_y.cos()) * speed;
+        // let velocity = (
+        //     x,
+        //     rot_x.sin() * speed,
+        //     z
+        // );
+        Firebolt::new(location, velocity, look_at)
     }
 }

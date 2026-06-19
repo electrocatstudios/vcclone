@@ -28,7 +28,8 @@ impl Firebolt {
         model.set_gltf(include_str!("../../assets/gltf/firebolt.gltf"));
         model.set_frag_shader(include_str!("../../assets/shaders/no_texture.frag").to_string());
         model.set_vert_shader(include_str!("../../assets/shaders/no_texture.vert").to_string());
-        model.set_rotation(0.0, -std::f32::consts::PI/2.0 + model_rotation.0, model_rotation.1);
+        model.set_rotation(0.0,  (std::f32::consts::PI - model_rotation.0) + (std::f32::consts::PI /2.0), 0.0 ); // Rotate the model to point forward
+        model.set_scale(0.05, 0.2, 0.2);
 
         let mut shards = Vec::new();
         let num_shards = fastrand::usize(5..8);
@@ -62,6 +63,10 @@ impl Firebolt {
     pub fn update(&mut self, delta: f64) {
 
         if self.state == FireboltState::Flying {
+            // DEBUG: Rotation experiments
+            // let x_rot = self.model.rotation.x + 0.01 * delta as f32; // Rotate the firebolt as it flies
+            // self.model.set_rotation(x_rot, self.model.rotation.y, self.model.rotation.z);
+
             self.location.x += self.velocity.0 * delta as f32;
             self.location.y += self.velocity.1 * delta as f32;
             self.location.z += self.velocity.2 * delta as f32;
