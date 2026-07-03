@@ -12,6 +12,7 @@ enum EnemyState {
 pub struct Enemy {
     position: Location3D,
     rotation: f32,
+    animation_timer: f32,
     head_model: Model,
     body_model: Model,
     left_arm_model: Model,
@@ -76,6 +77,7 @@ impl Enemy {
         Enemy {
             position: position,
             rotation: 0.0,
+            animation_timer: 0.0,
             head_model: head_model,
             body_model: body_model,
             left_arm_model: left_arm_model,
@@ -128,17 +130,26 @@ impl Enemy {
     fn set_new_destination(&mut self) {
         // For simplicity, we'll just move the enemy in a random direction within a certain range
         // let range = 5.0;
-        self.destination.x = (rand::random::<f32>() * 4.0) - 2.0;//self.position.x + (rand::random::<f32>() - 0.5) * range;
-        self.destination.z = (rand::random::<f32>() * 16.0) - 7.0;//self.position.z + (rand::random::<f32>() - 0.5) * range;
-   
+        // self.destination.x = (rand::random::<f32>() * 4.0) - 2.0;//self.position.x + (rand::random::<f32>() - 0.5) * range;
+        // self.destination.z = (rand::random::<f32>() * 16.0) - 7.0;//self.position.z + (rand::random::<f32>() - 0.5) * range;
+        if self.destination.x == 2.0 && self.destination.z == 2.0 {
+            self.destination.x = -2.0;
+            self.destination.z = -2.0;
+        } else {
+            self.destination.x = 2.0;
+            self.destination.z = 2.0;
+        }
     }
 
     pub fn update(&mut self, delta: f64) {
         let target_angle = self.get_target_angle();//self.destination.z.atan2(self.destination.x);
         if self.position.x < self.destination.x + 0.1 && self.position.x > self.destination.x - 0.1 &&
            self.position.z < self.destination.z + 0.1 && self.position.z > self.destination.z - 0.1 {
+            // We have reached the destination, set a new one
             self.set_new_destination();
+            self.animation_timer = 0.0; // Reset the animation timer when a new destination is set
         } else if (self.rotation - target_angle).abs() > 0.01 {
+            // Rotate towards the target angle
             let angle_diff = (target_angle - self.rotation).abs();
             if angle_diff < ENEMY_ROTATION_SPEED {
                 self.rotation = target_angle; // Snap to the target angle if we're close enough
@@ -147,6 +158,9 @@ impl Enemy {
             }
 
         } else if self.position.x != self.destination.x || self.position.z != self.destination.z {
+            // We are facing the right direction and can move towards the destination
+            self.animation_timer += delta as f32;
+            
             self.rotation = target_angle; // Ensure the enemy is facing the destination
             self.position.x += ENEMY_MOVE_SPEED * target_angle.cos() * delta as f32; // Move towards the destination
             self.position.z += ENEMY_MOVE_SPEED * target_angle.sin() * delta as f32;
@@ -161,19 +175,27 @@ impl Enemy {
         self.body_model.set_position(self.position.x, self.position.y, self.position.z);
         self.body_model.set_rotation(0.0, rot, 0.0);
 
-        self.left_arm_model.set_position(self.position.x + (0.15 * rot.cos()) , self.position.y, self.position.z + (0.15 * rot.sin()));
-        self.left_arm_model.set_rotation(0.0, rot, 0.0);
+        let timer_calc = self.animation_timer / 100.0;
+        let offset_ang = timer_calc.sin();
+
+        let forward_backward = timer_calc.sin() * 0.1; // Adjust the multiplier for more or less movement
+        let up_down = timer_calc.sin() * 0.08;
+        self.left_arm_model.set_position(self.position.x - forward_backward + (0.15 * rot.cos()) , self.position.y + up_down, self.position.z - forward_backward +(0.15 * rot.sin()));
+        self.left_arm_model.set_rotation(offset_ang, rot, 0.0);
 
         self.right_arm_model.set_position(self.position.x - (0.15 * rot.cos()), self.position.y, self.position.z - (0.15 * rot.sin()));
         self.right_arm_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
-
-        let shoe_offset_x = (0.0625 * rot.cos()) + (0.055 * rot.sin());
-        let shoe_offset_z =  (0.0625 * rot.sin()) - (0.055 * rot.cos()); // Distance from the center of the body to the shoe
+        
+        
+        let forward_backward = (offset_ang * 0.05) + 0.055; // Adjust the multiplier for more or less movement
+        let shoe_offset_x = (0.0625 * rot.cos()) + (forward_backward * rot.sin());
+        let shoe_offset_z =  (0.0625 * rot.sin()) - (forward_backward * rot.cos()); // Distance from the center of the body to the shoe
         self.left_shoe_model.set_position(self.position.x + shoe_offset_x, self.position.y - 0.3, self.position.z + shoe_offset_z);
         self.left_shoe_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
         
-        let shoe_offset_x = (0.0625 * rot.cos()) - (0.055 * rot.sin());
-        let shoe_offset_z =  (0.0625 * rot.sin()) + (0.055 * rot.cos()); // Distance from the center of the body to the shoe
+        let forward_backward = (offset_ang * -1.0 * 0.05) + 0.055;
+        let shoe_offset_x = (0.0625 * rot.cos()) - (forward_backward * rot.sin());
+        let shoe_offset_z =  (0.0625 * rot.sin()) + (forward_backward * rot.cos()); // Distance from the center of the body to the shoe
         self.right_shoe_model.set_position(self.position.x - shoe_offset_x, self.position.y - 0.3, self.position.z - shoe_offset_z);
         self.right_shoe_model.set_rotation(0.0, rot + std::f32::consts::PI, 0.0);
     }

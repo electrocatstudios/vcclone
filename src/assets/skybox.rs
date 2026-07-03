@@ -6,7 +6,7 @@ use crate::model::{camera::Camera, model::Model};
 
 pub struct Skybox {
     pub model: Model,
-    pub night_sky: Model,
+    pub night_sky: Vec<Model>,
 }
 
 impl Skybox {
@@ -17,25 +17,33 @@ impl Skybox {
         model.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
         model.set_use_transparency(true);
         
-        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/skybox.png"));
+        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/skybox_no_walls.png"));
         let data_url = format!("data:image/png;base64,{}", tex_b64);
         model.set_texture_base64(data_url);
         model.set_scale(5.0, 4.0, 20.0);
         model.set_position(0.0, 2.0, 0.0);
         model.set_rotation(0.0, 0.0, 0.0);
 
-        let mut night_sky = Model::new("night_sky".to_string());
-        night_sky.set_gltf(include_str!("../../assets/gltf/plane.gltf"));
-        night_sky.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
-        night_sky.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
+        // DEBUG: Set single plane for skybox
+        let mut model = Model::new("night_sky".to_string());
+        model.set_gltf(include_str!("../../assets/gltf/plane.gltf"));
+        model.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
+        model.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
         
-        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/starry_sky.png"));
+        let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/skybox_no_walls.png"));
         let data_url = format!("data:image/png;base64,{}", tex_b64);
-        night_sky.set_texture_base64(data_url);
-        night_sky.set_scale(20.0, 40.0, 20.0);
-        night_sky.set_position(0.0, 8.0, 18.0);
-        night_sky.set_rotation(-std::f32::consts::FRAC_PI_2, 0.0, 0.0);
+        model.set_texture_base64(data_url);
+        model.set_scale(20.0, 40.0, 20.0);
+        model.set_position(0.0, 0.0, 0.0);
+        model.set_rotation(-std::f32::consts::FRAC_PI_2, 0.0, 0.0);
+        // model
+        // END DEBUG
         
+
+        let mut night_sky = Vec::new();
+        night_sky.push(get_night_sky(0.0, 8.0, 18.0));
+        night_sky.push(get_night_sky(0.0, 8.0, -22.0));
+
         Self {
             model: model,
             night_sky: night_sky,
@@ -50,20 +58,39 @@ impl Skybox {
             self.model.setup(&gl);
         }
 
-        if self.night_sky.is_ready_to_load() {
-            self.night_sky.setup_shader(&gl, width, height);
-            self.night_sky.load_textures(&gl);
-            self.night_sky.setup(&gl);
+        for night_sky in &mut self.night_sky {
+            if night_sky.is_ready_to_load() {
+                night_sky.setup_shader(&gl, width, height);
+                night_sky.load_textures(&gl);
+                night_sky.setup(&gl);
+            }
         }
     }
 
     pub fn render(&mut self, gl: &GL, time: f64, camera: &Camera) {
-        if self.night_sky.is_ready_to_render() {
-            self.night_sky.render(gl, time, camera);
+        for night_sky in &mut self.night_sky {
+            if night_sky.is_ready_to_render() {
+                night_sky.render(gl, time, camera);
+            }
         }
         if self.model.is_ready_to_render() {
             self.model.render(gl, time, camera);
         }
         
     }
+}
+
+fn get_night_sky(x: f32, y: f32, z: f32) -> Model {
+    let mut night_sky = Model::new("night_sky".to_string());
+    night_sky.set_gltf(include_str!("../../assets/gltf/plane.gltf"));
+    night_sky.set_frag_shader(include_str!("../../assets/shaders/cube_texture.frag").to_string());
+    night_sky.set_vert_shader(include_str!("../../assets/shaders/cube_texture.vert").to_string());
+    
+    let tex_b64 = general_purpose::STANDARD.encode(include_bytes!("../../assets/texture/starry_sky.png"));
+    let data_url = format!("data:image/png;base64,{}", tex_b64);
+    night_sky.set_texture_base64(data_url);
+    night_sky.set_scale(20.0, 40.0, 20.0);
+    night_sky.set_position(x, y, z);
+    night_sky.set_rotation(-std::f32::consts::FRAC_PI_2, 0.0, 0.0);
+    night_sky
 }

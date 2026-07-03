@@ -204,14 +204,15 @@ impl GameControl {
         self.player.update(delta, &self.key_manager);
         let player_loc = self.player.get_location();
 
-        self.view_manager.camera.move_camera(player_loc.x, player_loc.y, player_loc.z);
+        // TODO: Re-enable camera movement
+        // self.view_manager.camera.move_camera(player_loc.x, player_loc.y, player_loc.z);
 
         let look_at = self.player.get_look_rotation();
         
         let x = player_loc.x + (look_at.0.sin());
         let y = player_loc.y - (look_at.1.sin());
         let z = player_loc.z + (look_at.0.cos());
-        self.view_manager.camera.look_at(x, y, z);
+        // self.view_manager.camera.look_at(x, y, z);
 
         // let debug = 
         if let Some(window) = web_sys::window() {
@@ -246,6 +247,13 @@ impl GameControl {
         for enemy in self.enemies.iter_mut() {
             enemy.update(delta);
         }
+
+        // DEBUG Enemy animation
+        let pos = self.enemies.first().unwrap().get_location();
+        let rot = ((std::f32::consts::PI * 2.0) - self.enemies.first().unwrap().get_rotation()) + (std::f32::consts::PI / 2.0);
+        self.view_manager.camera.move_camera(pos.x - (2.0 * rot.cos()), pos.y + 1.0, pos.z + (2.0 * rot.sin()));
+        self.view_manager.camera.look_at(pos.x, pos.y, pos.z);
+        // END DEBUG 
 
     }
 
